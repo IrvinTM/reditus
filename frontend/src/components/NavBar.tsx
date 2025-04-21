@@ -21,16 +21,16 @@ export default function NavBar() {
 
     return (
         <>
-        <div className='flex justify-between items-center h-12 max-w-[1240px] mx-auto px-4'>
+        <div className='flex justify-between items-center h-12 mx-auto px-4 bg-base'>
       {/* Logo */}
-      <h1 className='w-full text-3xl font-bold text-primary-light'>REACT.</h1>
+      <h1 className='w-full text-3xl font-bold text-primary-dark'>REACT.</h1>
 
       {/* Desktop Navigation */}
       <ul className='hidden md:flex'>
         {navItems.map(item => (
           <li
             key={item.id}
-            className='m-4 p-4 text-sm/6 font-semibold text-white/50 focus:outline-none  cursor-pointer'
+            className='m-4 p-4 text-sm/6 font-semibold text-white/50 focus:outline-none hover:text-primary-dark  cursor-pointer'
           >
             {item.text}
           </li>
@@ -38,7 +38,7 @@ export default function NavBar() {
       </ul>
 
       {/* Mobile Navigation Icon */}
-      <div onClick={handleNav} className='block md:hidden'>
+      <div onClick={handleNav} className='block md:hidden '>
         {nav ? <X /> :  <Menu />}
       </div>
 
@@ -46,18 +46,18 @@ export default function NavBar() {
       <ul
         className={
           nav
-            ? 'fixed md:hidden left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-[#000300] ease-in-out duration-500'
-            : 'ease-in-out w-[60%] duration-500 fixed top-0 bottom-0 left-[-100%]'
+            ? 'fixed md:hidden left-0 top-0 w-[60%] h-full ease-in-out duration-500 text-sm/6 font-semibold text-white/50 focus:outline-none hover:text-primary-dark  cursor-pointer bg-base '
+            : 'ease-in-out w-[60%] duration-500 fixed top-0 bottom-0 left-[-100%] bg-base'
         }
       >
         {/* Mobile Logo */}
-        <h1 className='w-full text-3xl font-bold text-[#00df9a] m-4'>REACT.</h1>
+        <h1 className='w-full text-3xl font-bold text-primary-dark'>REACT.</h1>
 
         {/* Mobile Navigation Items */}
         {navItems.map(item => (
           <li
             key={item.id}
-            className='p-4 border-b rounded-xl hover:bg-[#00df9a] duration-300 hover:text-black cursor-pointer border-gray-600'
+            className='p-4 rounded-xl  cursor-pointer border-gray-600 text-sm/6 font-semibold text-white/50 focus:outline-none hover:text-primary-dark'
           >
             {item.text}
           </li>
