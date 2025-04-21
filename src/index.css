@@ -2,5 +2,10 @@
 
 
 @theme {
-  --primary-dark: #cdd6f4;
+  --color-primary-dark: #cdd6f4;
+  --color-base: #1e1e2e;
+}
+
+:root{
+    @apply bg-base;
 }
