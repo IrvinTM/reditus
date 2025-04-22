@@ -1,10 +1,26 @@
-import { useState } from "react";
+import  React, { useState, ReactNode} from "react";
 import {X, Menu} from 'lucide-react';
 
-export default function NavBar() {
+interface NavBarProps {
+  home: ReactNode
+  sales: ReactNode
+  products: ReactNode
+  settings: ReactNode
+}
+
+const NavBar: React.FC<NavBarProps> = ({home, sales, products, settings}: NavBarProps) => {
 
       // State to manage the navbar's visibility
   const [nav, setNav] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("home");
+
+
+  const optionsMap = new Map<string, ReactNode>([
+    ["Home", home],
+    ["Sales", sales],
+    ["Products", products],
+    ["Settings",settings]])
+
 
   // Toggle function to handle the navbar's display
   const handleNav = () => {
@@ -31,6 +47,7 @@ export default function NavBar() {
           <li
             key={item.id}
             className='m-4 p-4 text-sm/6 font-semibold text-white/50 focus:outline-none hover:text-primary-dark  cursor-pointer'
+            onClick={() => setSelectedItem(item.text)}
           >
             {item.text}
           </li>
@@ -64,7 +81,15 @@ export default function NavBar() {
         ))}
       </ul>
     </div>
+    <div>
+      {
+        optionsMap.get(selectedItem)
+      }
+    </div>
+
         
         </>
     )
 }
+
+export default NavBar;
