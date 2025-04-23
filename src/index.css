@@ -2,10 +2,94 @@
 
 
 @theme {
-  --color-primary-dark: #cdd6f4;
+  /* --- Raw Catppuccin Colors --- */
+    --color-catp-rosewater: #f5e0dc;
+    --color-catp-flamingo: #f2cdcd;
+    --color-catp-pink: #f5c2e7;
+    --color-catp-mauve: #cba6f7;
+    --color-catp-red: #f38ba8;
+    --color-catp-maroon: #eba0ac;
+    --color-catp-peach: #fab387;
+    --color-catp-yellow: #f9e2af;
+    --color-catp-green: #a6e3a1;
+    --color-catp-teal: #94e2d5;
+    --color-catp-sky: #89dceb;
+    --color-catp-sapphire: #74c7ec;
+    --color-catp-blue: #89b4fa;
+    --color-catp-lavender: #b4befe;
+    --color-catp-text: #cdd6f4;
+    --color-catp-subtext1: #bac2de;
+    --color-catp-subtext0: #a6adc8;
+    --color-catp-overlay2: #9399b2;
+    --color-catp-overlay1: #7f849c;
+    --color-catp-overlay0: #6c7086;
+    --color-catp-surface2: #585b70;
+    --color-catp-surface1: #45475a;
+    --color-catp-surface0: #313244;
+    --color-catp-base: #1e1e2e;
+    --color-catp-mantle: #181825;
+    --color-catp-crust: #11111b;
+
+    /* --- Semantic Color Mappings --- */
+
+    /* Backgrounds */
+    --color-background: var(--color-catp-base);       /* Main background */
+    --color-background-alt: var(--color-catp-mantle); /* Slightly different bg, e.g., sidebars, code blocks */
+    --color-background-deep: var(--color-catp-crust); /* Deepest background, maybe for footers */
+
+    /* Surfaces (elements on top of background, like cards, modals) */
+    --color-surface-0: var(--color-catp-surface0);    /* Default surface */
+    --color-surface-1: var(--color-catp-surface1);    /* Slightly elevated surface */
+    --color-surface-2: var(--color-catp-surface2);    /* More elevated or distinct surface */
+
+    /* Text */
+    --color-text: var(--color-catp-text);             /* Primary text color */
+    --color-text-secondary: var(--color-catp-subtext1);/* Less important text */
+    --color-text-subtle: var(--color-catp-subtext0);   /* Even less important, placeholders, hints */
+    --color-text-disabled: var(--color-catp-overlay1); /* Disabled text (often lower contrast) */
+
+    /* Borders & Overlays */
+    --color-border: var(--color-catp-surface2);       /* Default borders on surfaces */
+    --color-border-strong: var(--color-catp-overlay0); /* Stronger borders between distinct areas */
+    --color-border-subtle: var(--color-catp-surface1); /* Very subtle borders */
+    --color-overlay-hover: var(--color-catp-overlay0); /* Subtle overlay for hover states on surfaces */
+    --color-overlay-active: var(--color-catp-overlay1);/* Subtle overlay for active/pressed states */
+
+    /* Actions & Accents */
+    --color-primary: var(--color-catp-mauve);         /* Main interactive color (buttons, links) */
+    --color-primary-hover: var(--color-catp-lavender);/* Hover state for primary elements */
+    --color-secondary: var(--color-catp-sapphire);    /* Secondary interactive color */
+    --color-secondary-hover: var(--color-catp-sky);   /* Hover state for secondary elements */
+    --color-accent: var(--color-catp-pink);           /* General accent/highlight color */
+    --color-accent-hover: var(--color-catp-flamingo); /* Hover for accent */
+
+    /* Status Indicators */
+    --color-success: var(--color-catp-green);         /* Success messages, validation */
+    --color-warning: var(--color-catp-yellow);        /* Warnings, pending states */
+    --color-error: var(--color-catp-red);             /* Error messages, danger actions */
+    --color-info: var(--color-catp-blue);             /* Informational messages */
+
+    /* Specific UI Elements (Examples) */
+    --color-link: var(--color-catp-sapphire);         /* Default link color */
+    --color-link-hover: var(--color-catp-sky);        /* Link hover color */
+    --color-button-primary-bg: var(--color-primary);
+    --color-button-primary-text: var(--color-catp-crust); /* Text on primary button needs high contrast */
+    --color-button-primary-hover-bg: var(--color-primary-hover);
+    --color-button-secondary-bg: var(--color-secondary);
+    --color-button-secondary-text: var(--color-catp-crust);
+    --color-button-secondary-hover-bg: var(--color-secondary-hover);
+    --color-focus-ring: var(--color-catp-sky);        /* Outline/ring for focused elements */
+
+    /* Inverse Text (for text on colored backgrounds) */
+    --color-text-on-primary: var(--color-catp-crust);  /* Text on Mauve background */
+    --color-text-on-secondary: var(--color-catp-crust);/* Text on Sapphire background */
+    --color-text-on-success: var(--color-catp-crust);  /* Text on Green background */
+    --color-text-on-warning: var(--color-catp-crust);  /* Text on Yellow background */
+    --color-text-on-error: var(--color-catp-crust);    /* Text on Red background */
+    --color-text-on-info: var(--color-catp-crust);     /* Text on Blue background */--color-primary-dark: #cdd6f4;
   --color-base: #1e1e2e;
 }
 
 :root{
-    @apply bg-base;
+    @apply bg-background;
 }

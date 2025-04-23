@@ -12,7 +12,7 @@ const NavBar: React.FC<NavBarProps> = ({home, sales, products, settings}: NavBar
 
       // State to manage the navbar's visibility
   const [nav, setNav] = useState(false);
-  const [selectedItem, setSelectedItem] = useState("home");
+  const [selectedItem, setSelectedItem] = useState<string>();
 
 
   const optionsMap = new Map<string, ReactNode>([
@@ -74,7 +74,7 @@ const NavBar: React.FC<NavBarProps> = ({home, sales, products, settings}: NavBar
         {navItems.map(item => (
           <li
             key={item.id}
-            className='p-4 rounded-xl  cursor-pointer border-gray-600 text-sm/6 font-semibold text-white/50 focus:outline-none hover:text-primary-dark'
+            className='p-4 rounded-xl  cursor-pointer border-surface-0 text-sm/6 font-semibold text-text focus:outline-none hover:text-primary-hover'
           >
             {item.text}
           </li>
@@ -83,7 +83,7 @@ const NavBar: React.FC<NavBarProps> = ({home, sales, products, settings}: NavBar
     </div>
     <div>
       {
-        optionsMap.get(selectedItem)
+        selectedItem ? optionsMap.get(selectedItem) : home
       }
     </div>
 
