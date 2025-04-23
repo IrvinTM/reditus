@@ -1,18 +1,45 @@
+import { useEffect, useState } from "react"
+import { Product, ProductsPageResponse } from "../types/types"
+import ProductCard from "./ProductCard"
+
 const Products = ()=>{
+    
+    const [productList, setProductList] = useState<Product[]>()
+
+    const url = "http://localhost:8080"
+
+    useEffect(()=>{
+        const res  = fetch(url+"/api/products")
+    .then((response)=>{
+        console.log("en el then")
+        const data = response.json()
+
+        .then((data)=>{
+    setProductList(data.content)
+        })
+    })
+
+    .catch((error:any)=> {
+        console.log(error)
+    })
+
+    }, [])
+    
     return(
-        <div>
-            <div className="max-w-sm rounded overflow-hidden shadow-lg shadow-surface-0 m-4 flex justify-center flex-col items-center bg-surface-1 hover:scale-101 hover:transition-transform transition-duration[300] cursor-pointer">
+        <>
+  {
+        productList?.map((product)=>(
+                    <div key={product.id}>
+                        
+            <ProductCard
+            productName={product.name}
+            productImageUrl={product.image}/>
 
-
-                
-                <img className="w-full" src="https://v1.tailwindcss.com/img/card-top.jpg" alt="Sunset in the mountains"></img>
-                <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2 text-text">
-                        Product
                     </div>
-                </div>
-            </div>
-        </div>
+        ))
+     }                 
+         
+        </>
     )
 }
 
