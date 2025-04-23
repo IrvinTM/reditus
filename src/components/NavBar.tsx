@@ -46,7 +46,7 @@ const NavBar: React.FC<NavBarProps> = ({home, sales, products, settings}: NavBar
         {navItems.map(item => (
           <li
             key={item.id}
-            className='m-4 p-4 text-sm/6 font-semibold text-white/50 focus:outline-none hover:text-primary-dark  cursor-pointer'
+            className={`m-4 px-4 py-1 text-sm/6 font-semibold  focus:outline-none hover:text-primary-dark  cursor-pointer ${selectedItem === item.text ? 'rounded-xl shadow-surface-2 bg-gradient-to-t from-surface-0 to-base text-primary-dark' : 'bg-base text-white/50'}`}
             onClick={() => setSelectedItem(item.text)}
           >
             {item.text}
