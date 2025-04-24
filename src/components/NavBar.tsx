@@ -55,19 +55,19 @@ const NavBar: React.FC<NavBarProps> = ({home, sales, products, settings}: NavBar
       </div>
       <div className={`flex flex-col justify-center items-center text-center w-full ${selectedItem === "Home" ? 'rounded-xl shadow-surface-2 shadow-sm bg-gradient-to-t from-surface-2 to-surface-0 text-primary-dark' : 'bg-base text-white/50'}`} onClick={()=>{setSelectedItem("Home")}}>
         { <Home className="w-12 h-12 mt-4 text-text" /> }
-        <p>Home</p>
+        <p>Inicio</p>
       </div>
       <div className={`flex flex-col justify-center items-center text-center w-full ${selectedItem === "Sales" ? 'rounded-xl shadow-surface-2 shadow-sm bg-gradient-to-t from-surface-2 to-surface-0 text-primary-dark' : 'bg-base text-white/50'}`} onClick={()=>{setSelectedItem("Sales")}}>
         { <Store className="w-12 h-12 mt-4 text-text" /> }
-        <p >Sales</p>
+        <p >Vender</p>
       </div>
       <div className={`flex flex-col justify-center items-center text-center w-full ${selectedItem === "Products" ? 'rounded-xl shadow-surface-2 shadow-sm bg-gradient-to-t from-surface-2 to-surface-0 text-primary-dark' : 'bg-base text-white/50'}`} onClick={()=>{setSelectedItem("Products")}}>
         { <Package className="w-12 h-12 mt-4 text-text" /> }
-        <p className="m-1">Products</p>
+        <p className="m-1">Productos</p>
       </div>
       <div className={`flex flex-col justify-center items-center text-center w-full ${selectedItem === "Settings" ? 'rounded-xl shadow-surface-2 shadow-sm bg-gradient-to-t from-surface-2 to-surface-0 text-primary-dark' : 'bg-base text-white/50'}`} onClick={()=>{setSelectedItem("Settings")}}>
         { <Settings className="w-12 h-12 mt-4 text-text" /> }
-        <p className="m-1">Settings</p>
+        <p className="m-1">Ajustes</p>
       </div>
      </div>
 
