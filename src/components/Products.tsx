@@ -27,7 +27,7 @@ const Products = ()=>{
     
     return(
         <>
-        <button className="p-4 m-4 border-2 border-surface-2 bg-surface-0 rounded-xl text-text hover:bg-surface-1">Agregar Producto</button>
+        <button className="p-4 m-4 border-2 border-surface-2 bg-surface-0 rounded-xl text-text hover:bg-surface-1 hover:shadow-xl hover:shadow-surface-0 ">Agregar Producto</button>
   {
         productList?.map((product)=>(
                     <div key={product.id}>
