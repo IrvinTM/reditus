@@ -5,11 +5,11 @@ import ProductCard from "./ProductCard"
 const Products = ()=>{
     
     const [productList, setProductList] = useState<Product[]>()
-
-    const url = "http://localhost:8080"
+    
+    const appUrl = import.meta.env.VITE_BACK_URL
 
     useEffect(()=>{
-        const res  = fetch(url+"/api/products")
+        const res  = fetch(appUrl+"/api/products")
     .then((response)=>{
         console.log("en el then")
         const data = response.json()
