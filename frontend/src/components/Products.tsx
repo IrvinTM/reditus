@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { Product, ProductsPageResponse } from "../types/types"
 import ProductCard from "./ProductCard"
+import { Button } from "@/components/ui/button"
+
 
 const Products = ()=>{
     
@@ -9,7 +11,7 @@ const Products = ()=>{
     const appUrl = import.meta.env.VITE_BACK_URL
 
     useEffect(()=>{
-        const res  = fetch(appUrl+"/api/products")
+        const res  = fetch(appUrl+"/api/products/")
     .then((response)=>{
         console.log("en el then")
         const data = response.json()
@@ -27,7 +29,7 @@ const Products = ()=>{
     
     return(
         <>
-        <button className="p-4 m-4 border-2 border-surface-2 bg-surface-0 rounded-xl text-text hover:bg-surface-1 hover:shadow-xl hover:shadow-surface-0 ">Agregar Producto</button>
+        <Button>Agregar Producto</Button>
   {
         productList?.map((product)=>(
                     <div key={product.id}>
