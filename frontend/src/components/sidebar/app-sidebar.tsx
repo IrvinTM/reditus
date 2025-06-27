@@ -1,19 +1,19 @@
 import * as React from "react"
 import {
   AudioWaveform,
-  Bot,
+  BadgeDollarSign,
+  Barcode,
   Command,
-  Frame,
-  Map,
-  PieChart,
+  Computer,
   Settings2,
-  SquareTerminal,
+  Store,
+  History
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavQuickLinks } from "@/components/nav-quick-links"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/sidebar/nav-main"
+import { NavQuickLinks } from "@/components/sidebar/nav-quick-links"
+import { NavUser } from "@/components/sidebar/nav-user"
+import { TeamSwitcher } from "@/components/sidebar/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -45,7 +45,7 @@ const data = {
     {
       title: "Administrar",
       url: "#",
-      icon: SquareTerminal,
+      icon: Computer,
       isActive: true,
       items: [
         {
@@ -65,7 +65,7 @@ const data = {
     {
       title: "Ventas",
       url: "#",
-      icon: Bot,
+      icon: BadgeDollarSign,
       items: [
         {
           title: "Vender",
@@ -128,17 +128,17 @@ const data = {
     {
       name: "Vender",
       url: "#",
-      icon: Frame,
+      icon: Store,
     },
     {
       name: "Productos",
       url: "/productos",
-      icon: PieChart,
+      icon: Barcode,
     },
     {
       name: "Historial de ventas",
       url: "#",
-      icon: Map,
+      icon: History,
     },
   ],
 }

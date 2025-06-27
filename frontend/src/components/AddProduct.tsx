@@ -1,9 +1,9 @@
-import { useState } from "react"
-import { Product } from "../types/types"
+// import { useState } from "react"
+// import { Product } from "../types/types"
 
 export const AddProduct = ()=>{
 
-    const product = useState<Product | undefined>();
+    //const product = useState<Product | undefined>();
     return(
         <>
         <div className="bg-slate-700">
