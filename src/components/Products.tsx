@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import { Product, ProductsPageResponse } from "../types/types"
+// import { Product, ProductsPageResponse } from "../types/types"
 import ProductCard from "./ProductCard"
-import { Button } from "@/components/ui/button"
+import { Product } from "@/types/types"
+import Layout from "./Layout"
 
 
 const Products = ()=>{
@@ -11,10 +12,10 @@ const Products = ()=>{
     const appUrl = import.meta.env.VITE_BACK_URL
 
     useEffect(()=>{
-        const res  = fetch(appUrl+"/api/products/")
+        fetch(appUrl+"/api/products/")
     .then((response)=>{
         console.log("en el then")
-        const data = response.json()
+        response.json()
 
         .then((data)=>{
     setProductList(data.content)
@@ -29,8 +30,8 @@ const Products = ()=>{
     
     return(
         <>
-        <Button>Agregar Producto</Button>
-  {
+         <Layout>
+   {
         productList?.map((product)=>(
                     <div key={product.id}>
                         
@@ -41,7 +42,10 @@ const Products = ()=>{
                     </div>
         ))
      }                 
-         
+ 
+
+          </Layout>
+
         </>
     )
 }
