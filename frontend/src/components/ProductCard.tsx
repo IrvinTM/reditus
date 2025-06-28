@@ -1,20 +1,40 @@
+import { Card, CardContent, CardDescription,  CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+
 interface ProductCard{
     productName:string
     productImageUrl: string
+    productDescription: string
+    producPrice: string
 
 }
-const ProductCard = ({productName, productImageUrl}: ProductCard)=>{
+const ProductCard = ({productName, productImageUrl, productDescription, producPrice}: ProductCard)=>{
     return(
-        <>
-            <div className="max-w-sm rounded overflow-hidden shadow-lg shadow-surface-0 m-4 flex justify-center flex-col items-center bg-surface-1 hover:scale-101 hover:transition-transform transition-duration[300] cursor-pointer">
-                <img className="w-full" src={productImageUrl} alt="Sunset in the mountains"></img>
-                <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2 text-text">
-                        {productName}
-                    </div>
-                </div>
-            </div>
-        </>
+        <Card className="w-full max-w-sm overflow-hidden">
+      <div className="relative">
+        <img
+          src={productImageUrl}
+          alt="Wireless Bluetooth Headphones"
+          width={300}
+          height={200}
+          className="w-full h-48 object-contain"
+        />
+      </div>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-semibold line-clamp-2">{productName}</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <CardDescription className="text-sm text-muted-foreground mb-4">
+                    {productDescription}
+                  </CardDescription>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-primary">{producPrice}</span>
+          </div>
+          <Button size="sm">Editar</Button>
+        </div>
+      </CardContent>
+    </Card>
     )
 }
 
