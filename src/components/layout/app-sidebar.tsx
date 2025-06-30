@@ -10,10 +10,6 @@ import {
   History
 } from "lucide-react"
 
-import { NavMain } from "@/components/sidebar/nav-main"
-import { NavQuickLinks } from "@/components/sidebar/nav-quick-links"
-import { NavUser } from "@/components/sidebar/nav-user"
-import { TeamSwitcher } from "@/components/sidebar/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +17,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { TeamSwitcher } from "./team-switcher"
+import { NavMain } from "./nav-main"
+import { NavQuickLinks } from "./nav-quick-links"
+import { NavUser } from "./nav-user"
 
 // This is sample data.
 const data = {
@@ -50,7 +50,7 @@ const data = {
       items: [
         {
           title: "Productos",
-          url: "#",
+          url: "/productos",
         },
         {
           title: "Proveedores",
