@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 // import { Product, ProductsPageResponse } from "../types/types"
 import ProductCard from "./ProductCard"
 import { Product } from "@/types/types"
-import Layout from "./Layout"
+import Layout from "../layout/Layout"
 import { toPriceString } from "@/utils/utils"
 
 

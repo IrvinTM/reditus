@@ -1,5 +1,6 @@
-import { Card, CardContent, CardDescription,  CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
+import { Card, CardContent, CardDescription,  CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { EditDialog } from "./EditProduct";
 
 interface ProductCard{
     productName:string
@@ -31,7 +32,7 @@ const ProductCard = ({productName, productImageUrl, productDescription, producPr
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-primary">{producPrice}</span>
           </div>
-          <Button size="sm">Editar</Button>
+          <EditDialog/>
         </div>
       </CardContent>
     </Card>

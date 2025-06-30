@@ -1,7 +1,7 @@
 import { Separator } from "@radix-ui/react-separator"
-import { AppSidebar } from "./sidebar/app-sidebar"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "./ui/sidebar"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "./ui/breadcrumb"
+import { AppSidebar } from "./app-sidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "../ui/sidebar"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "../ui/breadcrumb"
 
 export default function Layout ({ children } : React.PropsWithChildren) {
     return(
