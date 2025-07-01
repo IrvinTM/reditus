@@ -39,10 +39,7 @@ const Products = ()=>{
         {productList?.map((product) => (
           <ProductCard
             key={product.id}
-            productName={product.name}
-            productDescription={product.description}
-            productImageUrl={product.image}
-            producPrice={toPriceString(product.salesPrice)}
+            product={product}
           />
         ))}
       </div>
