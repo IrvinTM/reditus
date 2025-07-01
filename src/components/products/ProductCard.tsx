@@ -1,6 +1,7 @@
 import { Product } from "@/types/types";
 import { Card, CardContent, CardDescription,  CardHeader, CardTitle } from "../ui/card";
 import { EditDialog } from "./EditProduct";
+import { toPriceString } from "@/utils/utils";
 
 interface ProductCard{
   product:Product
@@ -26,7 +27,7 @@ const ProductCard = ({product}: ProductCard)=>{
                   </CardDescription>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-primary">{product.salesPrice}</span>
+            <span className="text-2xl font-bold text-primary">{toPriceString(product.salesPrice)}</span>
           </div>
           <EditDialog product={product}/>
         </div>
