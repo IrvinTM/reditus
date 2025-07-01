@@ -1,20 +1,16 @@
+import { Product } from "@/types/types";
 import { Card, CardContent, CardDescription,  CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
 import { EditDialog } from "./EditProduct";
 
 interface ProductCard{
-    productName:string
-    productImageUrl: string
-    productDescription: string
-    producPrice: string
-
+  product:Product
 }
-const ProductCard = ({productName, productImageUrl, productDescription, producPrice}: ProductCard)=>{
+const ProductCard = ({product}: ProductCard)=>{
     return(
         <Card className="w-full max-w-sm overflow-hidden">
       <div className="relative">
         <img
-          src={productImageUrl}
+          src={product.image}
           alt="Wireless Bluetooth Headphones"
           width={300}
           height={200}
@@ -22,17 +18,17 @@ const ProductCard = ({productName, productImageUrl, productDescription, producPr
         />
       </div>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold line-clamp-2">{productName}</CardTitle>
+        <CardTitle className="text-lg font-semibold line-clamp-2">{product.name}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         <CardDescription className="text-sm text-muted-foreground mb-4">
-                    {productDescription}
+                    {product.description}
                   </CardDescription>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-primary">{producPrice}</span>
+            <span className="text-2xl font-bold text-primary">{product.salesPrice}</span>
           </div>
-          <EditDialog/>
+          <EditDialog product={product}/>
         </div>
       </CardContent>
     </Card>
