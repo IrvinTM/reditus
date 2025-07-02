@@ -16,13 +16,14 @@ import { ChangeEvent, useState } from "react"
 
 interface editDialog{
   product:Product
+  onProductChange :  (product: Product) => void
 }
 
-export function EditDialog({product}: editDialog) {
+export function EditDialog({product, onProductChange}: editDialog) {
   
     const [prod, setProd] = useState<Product>(product);
-
     const appUrl = import.meta.env.VITE_BACK_URL
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>)=>{
       const {name, value} = e.target
@@ -30,6 +31,7 @@ export function EditDialog({product}: editDialog) {
       ...prevProduct, [name]: value
     }
     ))
+    console.log("the name is"+ name)
   }
 const handleSubmit = ()=>{
     fetch(appUrl+"/api/products/update", {
@@ -61,35 +63,35 @@ const handleSubmit = ()=>{
             </div>
             <div className="grid gap-3">
               <Label htmlFor="product-code">Codigo</Label>
-              <Input id="product-code" name="code" defaultValue={prod.code} />
+              <Input id="product-code" onChange={handleChange} name="code" defaultValue={prod.code} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="product-barcode">Codigo de barras</Label>
-              <Input id="product-barcode" name="barCode" defaultValue={prod.barCode} />
+              <Input id="product-barcode" onChange={handleChange} name="barCode" defaultValue={prod.barCode} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="measurement-unit">Unidad de medida</Label>
-              <Input id="measurement-unit" name="measurementUnit" defaultValue={prod.measurementUnit} />
+              <Input id="measurement-unit" onChange={handleChange} name="measurementUnit" defaultValue={prod.measurementUnit} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="description">Descripción</Label>
-              <Input id="description" name="description" defaultValue={prod.description} />
+              <Input id="description" onChange={handleChange} name="description" defaultValue={prod.description} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="image">Imagen</Label>
-              <Input id="image" name="image" defaultValue={prod.image} />
+              <Input id="image" onChange={handleChange} name="image" defaultValue={prod.image} />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="cost">Costo</Label>
-              <Input id="cost" name="cost" defaultValue={prod.cost} type="number" />
+              <Input id="cost" onChange={handleChange} name="cost" defaultValue={prod.cost} type="number" />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="no-tax-included-price">Precio sin impuestos</Label>
-              <Input id="no-tax-included-price" name="noTaxIncludedPrice" defaultValue={prod.noTaxIncludedPrice} type="number" />
+              <Input id="no-tax-included-price" onChange={handleChange} name="noTaxIncludedPrice" defaultValue={prod.noTaxIncludedPrice} type="number" />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="tax-included-price">Precio con impuestos</Label>
-              <Input id="tax-included-price" name="taxIncludedPrice" defaultValue={prod.taxIncludedPrice} type="number" />
+              <Input id="tax-included-price" onChange={handleChange} name="taxIncludedPrice" defaultValue={prod.taxIncludedPrice} type="number" />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="profit-margin">Margen de ganancia</Label>
@@ -97,7 +99,7 @@ const handleSubmit = ()=>{
             </div>
             <div className="grid gap-3">
               <Label htmlFor="sales-price">Precio de venta</Label>
-              <Input id="sales-price" name="salesPrice" defaultValue={prod.salesPrice} type="number" />
+              <Input id="sales-price" onChange={handleChange} name="salesPrice" defaultValue={prod.salesPrice} type="number" />
             </div>
           </div>
           <DialogFooter>
@@ -106,7 +108,7 @@ const handleSubmit = ()=>{
             </DialogClose>
 
             <DialogClose asChild>
-            <Button onClick={()=>handleSubmit()}>Guardar cambios</Button>
+            <Button onClick={()=>{handleSubmit(); onProductChange(prod)}}>Guardar cambios</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
