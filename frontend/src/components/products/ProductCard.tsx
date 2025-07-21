@@ -13,8 +13,9 @@ import { DeleteDialog } from "./DeleteDialog";
 
 interface ProductCard {
   product: Product;
+  onProductDeleted: () => void;
 }
-const ProductCard = ({ product }: ProductCard) => {
+const ProductCard = ({ product, onProductDeleted }: ProductCard) => {
   const [prod, setProd] = useState<Product>(product);
 
   return (
@@ -45,7 +46,7 @@ const ProductCard = ({ product }: ProductCard) => {
           </div>
           <div className="flex gap-4">
             <EditDialog product={prod} onProductChange={setProd} />
-            <DeleteDialog product={prod}/>
+            <DeleteDialog product={prod} onProductDeleted={onProductDeleted}/>
           </div>
         </div>
       </CardContent>

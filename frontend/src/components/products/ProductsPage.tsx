@@ -32,7 +32,7 @@ const Products = () => {
     taxIncludedPrice: 0,
   });
 
-  useEffect(() => {
+  const getProducts = ()=>{
     fetch(appUrl + "/api/products/")
       .then((response) => {
         response.json().then((data) => {
@@ -42,9 +42,11 @@ const Products = () => {
       .catch((error: any) => {
         console.log(error);
       });
-  }, []);
+  }
 
-  //TODO update product list when product is added or deleted
+  useEffect(() => {
+    getProducts()
+  }, []);
 
   return (
     <>
@@ -54,6 +56,8 @@ const Products = () => {
             <AddDialog
               product={exampleProduct}
               onProductAdded={setExampleProduct}
+              onProductSuccess={getProducts}
+
             />
             <Input />
             <Button className="mb-2">Buscar</Button>
@@ -61,7 +65,7 @@ const Products = () => {
           {/* Responsive Grid - Better for different screen sizes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {productList?.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} onProductDeleted={getProducts}/>
             ))}
           </div>
         </div>
