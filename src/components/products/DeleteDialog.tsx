@@ -14,17 +14,25 @@ import { Button } from "../ui/button";
 
 interface DeleteDialog {
   product: Product;
+  onProductDeleted: () => void;
 }
 
-export const DeleteDialog = ({product}:DeleteDialog) => {
+export const DeleteDialog = ({product, onProductDeleted}:DeleteDialog) => {
 
   const appUrl = import.meta.env.VITE_BACK_URL;
 
-  const handleDelete=()=>{
-    fetch(appUrl+"/api/products/delete/"+product.id, {
+  const handleDelete= async ()=>{
+    try{
+   const response = await fetch(appUrl+"/api/products/delete/"+product.id, {
       method: "delete"
-    }).then((response)=>{console.log(response.json())})
-
+    })
+    if(response.status === 204){
+      onProductDeleted()
+    }
+    }
+    catch(error){
+      console.log(error)
+    }
   }
   return (
     <AlertDialog>

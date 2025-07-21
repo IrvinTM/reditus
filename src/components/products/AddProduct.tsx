@@ -17,9 +17,10 @@ import { ChangeEvent, useState } from "react";
 interface addDialog {
   product: Product;
   onProductAdded: (product: Product) => void;
+  onProductSuccess: () => void;
 }
 
-export function AddDialog({ product, onProductAdded }: addDialog) {
+export function AddDialog({ product, onProductAdded, onProductSuccess }: addDialog) {
   const [prod, setProd] = useState<Product>(product);
   const appUrl = import.meta.env.VITE_BACK_URL;
 
@@ -31,14 +32,18 @@ export function AddDialog({ product, onProductAdded }: addDialog) {
     }));
     console.log("the name is" + name);
   };
-  const handleSubmit = () => {
-    fetch(appUrl + "/api/products/create", {
+  const handleSubmit = async () => {
+    const response = await fetch(appUrl + "/api/products/create", {
       method: "post",
       body: JSON.stringify(prod),
       headers: {
         "Content-Type": "Application/json",
       },
     });
+
+    if(response.status === 200 ){
+      onProductSuccess()
+    }
   };
 
   return (

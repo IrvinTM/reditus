@@ -31,14 +31,17 @@ export function EditDialog({ product, onProductChange }: editDialog) {
     }));
     console.log("the name is" + name);
   };
-  const handleSubmit = () => {
-    fetch(appUrl + "/api/products/update", {
+  const handleSubmit = async () => {
+    const response = await fetch(appUrl + "/api/products/update", {
       method: "put",
       body: JSON.stringify(prod),
       headers: {
         "Content-Type": "Application/json",
       },
     });
+    if(response.ok){
+      
+    }
   };
 
   return (
