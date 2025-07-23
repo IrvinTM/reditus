@@ -64,12 +64,12 @@ const data = {
     },
     {
       title: "Ventas",
-      url: "#",
+      url: "/vender",
       icon: BadgeDollarSign,
       items: [
         {
           title: "Vender",
-          url: "#",
+          url: "/vender",
         },
         {
           title: "Historial de ventas",
@@ -127,7 +127,7 @@ const data = {
   projects: [
     {
       name: "Vender",
-      url: "#",
+      url: "/vender",
       icon: Store,
     },
     {

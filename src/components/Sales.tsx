@@ -1,9 +1,13 @@
+import Layout from "./layout/Layout";
+
 
 const Sales = ()=>{
     return(
         <div>
+            <Layout>
 
-            <h1 className="text-white">This is Sales</h1>
+            </Layout>
+
         </div>
     )
 }

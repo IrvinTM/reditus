@@ -29,7 +29,7 @@ export function EditDialog({ product, onProductChange }: editDialog) {
       ...prevProduct,
       [name]: value,
     }));
-    console.log("the name is" + name);
+    console.log("the name  is" + name);
   };
   const handleSubmit = async () => {
     const response = await fetch(appUrl + "/api/products/update", {
