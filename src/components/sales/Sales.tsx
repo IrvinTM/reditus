@@ -286,6 +286,7 @@ export default function Sales() {
                         onChange={(e) => {
                           setCashamount(Number.parseFloat(e.target.value));
                         }}
+                        onKeyDown={() => {handleCalculateChange((cashAmount || 0), total);}}
                       />
                       <Button
                         onClick={() => {
