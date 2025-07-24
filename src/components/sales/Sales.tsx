@@ -27,6 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import Layout from "../layout/Layout";
 import { Product, SaleItem } from "@/types/types";
 import { SelectFromProducts } from "./SelectFromProducts";
+import { toPriceString } from "@/utils/utils";
 
 export default function Sales() {
   const exampleProduct = {
@@ -50,14 +51,15 @@ export default function Sales() {
     active: true,
     ageRestricted: false,
   };
-  const [saleItems, setSaleItems] = useState<SaleItem[]>([
-  ]);
+  const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   const [discount, setDiscount] = useState(0);
   const [customerName, setCustomerName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [barcode, setBarcode] = useState("");
   const appUrl = import.meta.env.VITE_BACK_URL;
   const [searchText, setSearchText] = useState("");
+  const [cashChange, setCashChange] = useState<number>();
+  const [cashAmount, setCashamount] = useState<number>();
 
   const subtotal = saleItems.reduce(
     (sum, saleItem) => sum + saleItem.priceAtSale * saleItem.quantity,
@@ -65,6 +67,11 @@ export default function Sales() {
   );
   const tax = subtotal * 0.08; // 8% tax rate
   const total = subtotal + tax - discount;
+
+  const handleCalculateChange = (amount: number, total: number) => {
+    const change = amount * 100 - total;
+    setCashChange(change);
+  };
 
   const handleQuantityChange = (id: number, change: number) => {
     setSaleItems(
@@ -104,12 +111,17 @@ export default function Sales() {
   };
 
   const addProduct = (newProduct: Product) => {
-    const nsaleItem = { id: Math.random() * 2000, product: newProduct, quantity: 1, priceAtSale: newProduct.salesPrice}
-    setSaleItems([...saleItems, nsaleItem ])
-  }
+    const nsaleItem = {
+      id: Math.random() * 2000,
+      product: newProduct,
+      quantity: 1,
+      priceAtSale: newProduct.salesPrice,
+    };
+    setSaleItems([...saleItems, nsaleItem]);
+  };
 
   const handleCompleteSale = () => {
-    alert(`Sale completed! Total: $${total.toFixed(2)}`);
+    alert(`Sale completed! Total: ${toPriceString(total)}`);
     // In a real app, this would process the payment and create a receipt
     setSaleItems([]);
     setDiscount(0);
@@ -132,7 +144,7 @@ export default function Sales() {
               />
               <Button onClick={handleAddProduct}>Agregar</Button>
               <SelectFromProducts
-              onProductSelected={addProduct}
+                onProductSelected={addProduct}
               ></SelectFromProducts>
             </div>
           </CardHeader>
@@ -147,7 +159,7 @@ export default function Sales() {
                     <div className="flex-1">
                       <div className="font-medium">{saleItem.product.name}</div>
                       <div className="text-sm text-muted-foreground">
-                        ${saleItem.priceAtSale.toFixed(2)} each
+                        {toPriceString(saleItem.priceAtSale)} cada uno
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -192,22 +204,22 @@ export default function Sales() {
               <div className="w-full">
                 <div className="flex justify-between">
                   <span>Sub-total:</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{toPriceString(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Impuesto (8%):</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{toPriceString(tax)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Descuento:</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-{toPriceString(discount)}</span>
                   </div>
                 )}
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{toPriceString(total)}</span>
                 </div>
               </div>
             </CardFooter>
@@ -266,9 +278,29 @@ export default function Sales() {
                   <div className="space-y-2 pt-4">
                     <Label htmlFor="cashAmount">Cantidad</Label>
                     <div className="flex gap-2">
-                      <Input id="cashAmount" type="number" placeholder="0.00" />
-                      <Button variant="outline">Calcular el cambio</Button>
+                      <Input
+                        id="cashAmount"
+                        type="number"
+                        placeholder="0.00"
+                        value={cashAmount}
+                        onChange={(e) => {
+                          setCashamount(Number.parseFloat(e.target.value));
+                        }}
+                      />
+                      <Button
+                        onClick={() => {
+                          handleCalculateChange(cashAmount|| 0, total);
+                        }}
+                        variant="outline"
+                      >
+                        Calcular el cambio
+                      </Button>
                     </div>
+                    <span>
+                      {(cashChange || 0) > 0
+                        ? "El cambio es: " + toPriceString((cashChange || 0))
+                        : "Faltan: " + toPriceString((cashChange || 0))}
+                    </span>
                   </div>
                 )}
               </TabsContent>
@@ -372,8 +404,8 @@ export default function Sales() {
               onClick={handleCompleteSale}
               disabled={saleItems.length === 0}
             >
-              <Receipt className="mr-2 h-5 w-5" /> Completar venta ($
-              {total.toFixed(2)})
+              <Receipt className="mr-2 h-5 w-5" /> Completar venta (
+              {toPriceString(total)})
             </Button>
           </CardFooter>
         </Card>
