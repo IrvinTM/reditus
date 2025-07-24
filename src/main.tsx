@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { BrowserRouter, Route, Routes } from "react-router";
-import Sales from './components/Sales.tsx';
+import Sales from './components/sales/Sales.tsx';
 import { Settings } from 'lucide-react';
 import Products from './components/products/ProductsPage.tsx';
 
