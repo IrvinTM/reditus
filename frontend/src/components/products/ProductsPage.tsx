@@ -32,6 +32,8 @@ const Products = () => {
     taxIncludedPrice: 0,
   });
 
+  const [searchText, setSearchText] = useState("");
+
   const getProducts = ()=>{
     fetch(appUrl + "/api/products/")
       .then((response) => {
@@ -48,6 +50,19 @@ const Products = () => {
     getProducts()
   }, []);
 
+  const handleSearch = async (searchParam:string) => {
+    if (searchParam === "") {
+      getProducts()
+      return
+    }
+    const response = await fetch(appUrl + "/api/products/search/" + searchParam)
+    const res = await response.json()
+    if (response.ok) {
+      setProductList(res)
+    }
+  }
+
+
   return (
     <>
       <Layout>
@@ -59,8 +74,8 @@ const Products = () => {
               onProductSuccess={getProducts}
 
             />
-            <Input />
-            <Button className="mb-2">Buscar</Button>
+            <Input value={searchText} onChange={(e) => {setSearchText(e.target.value);}} />
+            <Button onClick={() => handleSearch(searchText)} className="mb-2">Buscar</Button>
           </div>
           {/* Responsive Grid - Better for different screen sizes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">

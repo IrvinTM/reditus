@@ -31,3 +31,10 @@ export type ProductsPageResponse = {
     content: Product[];
     customPage: CustomPage;
 };
+
+export type SaleItem = {
+    id: number;
+    product: Product;
+    quantity: number;
+    priceAtSale: number;
+}
