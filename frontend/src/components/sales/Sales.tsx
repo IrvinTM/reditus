@@ -24,8 +24,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import Layout from "./layout/Layout";
+import Layout from "../layout/Layout";
 import { Product, SaleItem } from "@/types/types";
+import { SelectFromProducts } from "./SelectFromProducts";
 
 export default function Sales() {
   const exampleProduct = {
@@ -50,9 +51,6 @@ export default function Sales() {
     ageRestricted: false,
   };
   const [saleItems, setSaleItems] = useState<SaleItem[]>([
-    { id: 1, product: exampleProduct, priceAtSale: 1200, quantity: 1 },
-    { id: 1, product: exampleProduct, priceAtSale: 1200, quantity: 1 },
-    { id: 1, product: exampleProduct, priceAtSale: 1200, quantity: 1 },
   ]);
   const [discount, setDiscount] = useState(0);
   const [customerName, setCustomerName] = useState("");
@@ -60,7 +58,6 @@ export default function Sales() {
   const [barcode, setBarcode] = useState("");
   const appUrl = import.meta.env.VITE_BACK_URL;
   const [searchText, setSearchText] = useState("");
-
 
   const subtotal = saleItems.reduce(
     (sum, saleItem) => sum + saleItem.priceAtSale * saleItem.quantity,
@@ -81,11 +78,12 @@ export default function Sales() {
     );
   };
 
-  const handleSearch = async () =>{
-    const response = await fetch(appUrl+"/api/products/search/"+searchText, {
-    })
-
-  }
+  const handleSearch = async () => {
+    const response = await fetch(
+      appUrl + "/api/products/search/" + searchText,
+      {}
+    );
+  };
 
   const handleRemoveProduct = (id: number) => {
     setSaleItems(saleItems.filter((saleItem) => saleItem.id !== id));
@@ -104,6 +102,11 @@ export default function Sales() {
       setBarcode("");
     }
   };
+
+  const addProduct = (newProduct: Product) => {
+    const nsaleItem = { id: Math.random() * 2000, product: newProduct, quantity: 1, priceAtSale: newProduct.salesPrice}
+    setSaleItems([...saleItems, nsaleItem ])
+  }
 
   const handleCompleteSale = () => {
     alert(`Sale completed! Total: $${total.toFixed(2)}`);
@@ -128,6 +131,9 @@ export default function Sales() {
                 className="flex-1"
               />
               <Button onClick={handleAddProduct}>Add</Button>
+              <SelectFromProducts
+              onProductSelected={addProduct}
+              ></SelectFromProducts>
             </div>
           </CardHeader>
           <CardContent>
