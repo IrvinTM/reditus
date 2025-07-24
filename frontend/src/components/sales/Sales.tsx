@@ -122,15 +122,15 @@ export default function Sales() {
         {/* Left side - Item list */}
         <Card className="h-[calc(100vh-120px)]">
           <CardHeader>
-            <CardTitle>Items</CardTitle>
+            <CardTitle>Venta</CardTitle>
             <div className="flex gap-2">
               <Input
-                placeholder="Scan or enter barcode"
+                placeholder="Escanear o ingresar codigo de barras"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
                 className="flex-1"
               />
-              <Button onClick={handleAddProduct}>Add</Button>
+              <Button onClick={handleAddProduct}>Agregar</Button>
               <SelectFromProducts
               onProductSelected={addProduct}
               ></SelectFromProducts>
@@ -183,7 +183,7 @@ export default function Sales() {
                 ))}
                 {saleItems.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No items added to sale
+                    Ningun producto agregado
                   </div>
                 )}
               </div>
@@ -191,16 +191,16 @@ export default function Sales() {
             <CardFooter className="">
               <div className="w-full">
                 <div className="flex justify-between">
-                  <span>Subtotal:</span>
+                  <span>Sub-total:</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Tax (8%):</span>
+                  <span>Impuesto (8%):</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Discount:</span>
+                    <span>Descuento:</span>
                     <span>-${discount.toFixed(2)}</span>
                   </div>
                 )}
@@ -217,18 +217,18 @@ export default function Sales() {
         {/* Right side - Sale options */}
         <Card className="h-[calc(100vh-120px)]">
           <CardHeader>
-            <CardTitle>Complete Sale</CardTitle>
+            <CardTitle>Completar venta</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="payment" className="w-full">
               <TabsList className="grid grid-cols-3 mb-4">
-                <TabsTrigger value="payment">Payment</TabsTrigger>
-                <TabsTrigger value="customer">Customer</TabsTrigger>
-                <TabsTrigger value="discount">Discount</TabsTrigger>
+                <TabsTrigger value="payment">Pago</TabsTrigger>
+                <TabsTrigger value="customer">Cliente</TabsTrigger>
+                <TabsTrigger value="discount">Descuento</TabsTrigger>
               </TabsList>
               <TabsContent value="payment" className="space-y-4">
                 <div className="space-y-2">
-                  <h3 className="font-medium">Select Payment Method</h3>
+                  <h3 className="font-medium">Seleccionar metodo de pago</h3>
                   <RadioGroup
                     value={paymentMethod}
                     onValueChange={setPaymentMethod}
@@ -237,13 +237,13 @@ export default function Sales() {
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="cash" id="cash" />
                       <Label htmlFor="cash" className="flex items-center gap-2">
-                        <Banknote className="h-4 w-4" /> Cash
+                        <Banknote className="h-4 w-4" /> Efectivo
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="card" id="card" />
                       <Label htmlFor="card" className="flex items-center gap-2">
-                        <CreditCard className="h-4 w-4" /> Card
+                        <CreditCard className="h-4 w-4" /> Tarjeta
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -252,22 +252,22 @@ export default function Sales() {
                         htmlFor="mobile"
                         className="flex items-center gap-2"
                       >
-                        <Wallet className="h-4 w-4" /> Mobile Pay
+                        <Wallet className="h-4 w-4" /> Pago con celular
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="other" id="other" />
-                      <Label htmlFor="other">Other</Label>
+                      <Label htmlFor="other">Otro</Label>
                     </div>
                   </RadioGroup>
                 </div>
 
                 {paymentMethod === "cash" && (
                   <div className="space-y-2 pt-4">
-                    <Label htmlFor="cashAmount">Cash Amount</Label>
+                    <Label htmlFor="cashAmount">Cantidad</Label>
                     <div className="flex gap-2">
                       <Input id="cashAmount" type="number" placeholder="0.00" />
-                      <Button variant="outline">Calculate Change</Button>
+                      <Button variant="outline">Calcular el cambio</Button>
                     </div>
                   </div>
                 )}
@@ -276,22 +276,22 @@ export default function Sales() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    <h3 className="font-medium">Customer Information</h3>
+                    <h3 className="font-medium">Informacion del cliente</h3>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerName">Customer Name</Label>
+                    <Label htmlFor="customerName">Nombre</Label>
                     <Input
                       id="customerName"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Enter customer name"
+                      placeholder="Ingresar el nombre del cliente"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerPhone">Phone Number</Label>
+                    <Label htmlFor="customerPhone">Numero de telefono</Label>
                     <Input
                       id="customerPhone"
-                      placeholder="Enter phone number"
+                      placeholder="Ingresar el numero de telefono"
                     />
                   </div>
                   <div className="space-y-2">
@@ -299,7 +299,7 @@ export default function Sales() {
                     <Input
                       id="customerEmail"
                       type="email"
-                      placeholder="Enter email address"
+                      placeholder="Ingresar el email del cliente"
                     />
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export default function Sales() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Percent className="h-4 w-4" />
-                    <h3 className="font-medium">Apply Discount</h3>
+                    <h3 className="font-medium">Aplicar descuento</h3>
                   </div>
                   <RadioGroup defaultValue="none" className="grid gap-2">
                     <div className="flex items-center space-x-2">
@@ -317,7 +317,7 @@ export default function Sales() {
                         id="none"
                         onClick={() => setDiscount(0)}
                       />
-                      <Label htmlFor="none">No Discount</Label>
+                      <Label htmlFor="none">Sin descuento</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
@@ -325,7 +325,7 @@ export default function Sales() {
                         id="percentage"
                         onClick={() => setDiscount(subtotal * 0.1)}
                       />
-                      <Label htmlFor="percentage">10% Off</Label>
+                      <Label htmlFor="percentage">10% de descuento</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
@@ -333,12 +333,12 @@ export default function Sales() {
                         id="fixed"
                         onClick={() => setDiscount(5)}
                       />
-                      <Label htmlFor="fixed">$5 Off</Label>
+                      <Label htmlFor="fixed">$5 de descuento</Label>
                     </div>
                   </RadioGroup>
                   <div className="pt-2">
-                    <Label htmlFor="customDiscount">
-                      Custom Discount Amount ($)
+                    <Label className="mb-2" htmlFor="customDiscount">
+                      Ingresar cantidad de descuento ($)
                     </Label>
                     <Input
                       id="customDiscount"
@@ -356,14 +356,14 @@ export default function Sales() {
           <CardFooter className="flex-col gap-4 border-t pt-4">
             <div className="grid grid-cols-2 gap-4 w-full">
               <Button variant="outline" className="w-full bg-transparent">
-                Hold Sale
+                Pausar venta
               </Button>
               <Button
                 variant="outline"
                 className="w-full bg-transparent"
                 onClick={() => setSaleItems([])}
               >
-                Cancel
+                Cancelar
               </Button>
             </div>
             <Button
@@ -372,7 +372,7 @@ export default function Sales() {
               onClick={handleCompleteSale}
               disabled={saleItems.length === 0}
             >
-              <Receipt className="mr-2 h-5 w-5" /> Complete Sale ($
+              <Receipt className="mr-2 h-5 w-5" /> Completar venta ($
               {total.toFixed(2)})
             </Button>
           </CardFooter>
