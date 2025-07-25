@@ -1,5 +1,6 @@
 import Chart from "./components/charts/chart-bar-stacked";
 import Layout from "./components/layout/Layout";
+import { ThemeProvider } from "./components/theme-provider";
 
 export default function App() {
   return (

@@ -21,6 +21,7 @@ import { TeamSwitcher } from "./team-switcher"
 import { NavMain } from "./nav-main"
 import { NavQuickLinks } from "./nav-quick-links"
 import { NavUser } from "./nav-user"
+import { ModeToggle } from "../mode-toggle"
 
 // This is sample data.
 const data = {
@@ -152,9 +153,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavQuickLinks projects={data.projects} />
+        <div className="pl-4">
+        <ModeToggle/>
+        </div>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
+
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

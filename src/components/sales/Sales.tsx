@@ -25,9 +25,10 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Layout from "../layout/Layout";
-import { Product, SaleItem } from "@/types/types";
+import { Product, Sale, SaleItem } from "@/types/types";
 import { SelectFromProducts } from "./SelectFromProducts";
 import { toPriceString } from "@/utils/utils";
+import { toast } from "sonner"
 
 export default function Sales() {
   const exampleProduct = {
@@ -118,11 +119,26 @@ export default function Sales() {
       priceAtSale: newProduct.salesPrice,
     };
     setSaleItems([...saleItems, nsaleItem]);
+
+      toast("Product added")
   };
 
-  const handleCompleteSale = () => {
-    alert(`Sale completed! Total: ${toPriceString(total)}`);
-    // In a real app, this would process the payment and create a receipt
+  const handleCompleteSale = async  () => {
+    //TODO validate if customer exists or create a new one if it doesnt 
+    //TODO create a cash register in the backend 
+    //TODO get the discount and customer from the actual sale
+
+   const sale: Sale = {cashRegisterID: 1, customerID:1, date: Date.now(), discount: 0, items: saleItems, total: total}
+    const response = await fetch(appUrl+"/api/sales/create", {
+      method: "post",
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(sale)
+    })
+    if(response.ok){
+      toast("venta guardada")
+    }
     setSaleItems([]);
     setDiscount(0);
     setCustomerName("");
@@ -178,8 +194,7 @@ export default function Sales() {
                         variant="outline"
                         size="icon"
                         onClick={() => handleQuantityChange(saleItem.id, 1)}
-                        className="h-8 w-8"
-                      >
+                        className="h-8 w-8">
                         <PlusCircle className="h-4 w-4" />
                       </Button>
                       <Button

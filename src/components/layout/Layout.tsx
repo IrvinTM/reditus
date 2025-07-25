@@ -5,6 +5,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "../u
 
 export default function Layout ({ children } : React.PropsWithChildren) {
     return(
+
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
@@ -40,5 +41,6 @@ export default function Layout ({ children } : React.PropsWithChildren) {
         </div>
       </SidebarInset>
     </SidebarProvider>
+
     )
 }

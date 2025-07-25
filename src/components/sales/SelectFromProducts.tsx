@@ -16,6 +16,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { AddDialog } from "../products/AddProduct";
 import ProductCard from "./ProductCard";
 
+
 interface selectProduct {
   onProductSelected: ( product: Product ) => void;
 }
