@@ -38,3 +38,14 @@ export type SaleItem = {
     quantity: number;
     priceAtSale: number;
 }
+
+export type Sale = {
+    id?: number
+    items: SaleItem[]
+    date: number
+    discount: number
+    total: number
+    cashRegisterID: number
+    customerID: number
+}
+

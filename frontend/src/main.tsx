@@ -6,9 +6,13 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Sales from './components/sales/Sales.tsx';
 import { Settings } from 'lucide-react';
 import Products from './components/products/ProductsPage.tsx';
+import { Toaster } from 'sonner';
+import { ThemeProvider } from './components/theme-provider.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+
+      <ThemeProvider defaultTheme="dark" storageKey="reditus-theme">
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
@@ -18,5 +22,9 @@ createRoot(document.getElementById('root')!).render(
 
     </Routes>
 </BrowserRouter>
+
+    <Toaster />
+</ThemeProvider>
   </StrictMode>,
+
 )
