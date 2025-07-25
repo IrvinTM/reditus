@@ -80,44 +80,49 @@ export function SelectFromProducts({
 
   return (
     <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">Seleccionar productos</Button>
-        </DialogTrigger>
-        <DialogContent className="h-full min-w-full overflow-auto">
-          <DialogHeader>
-            <DialogTitle>Agregar un nuevo producto</DialogTitle>
-            <DialogDescription>
-              Selecciona el producto que deseas agregar.
-            </DialogDescription>
-          </DialogHeader>
-        <div className="container mx-auto p-6">
+      <DialogTrigger asChild>
+        <Button variant="outline">Seleccionar productos</Button>
+      </DialogTrigger>
+      <DialogContent className="h-full min-w-full p-0 flex flex-col">
+        {/* Fixed Header */}
+        <DialogHeader className="flex-shrink-0 px-4 py-2 border-b">
+          <DialogTitle>Agregar un nuevo producto</DialogTitle>
+          <DialogDescription>Selecciona el producto que deseas agregar.</DialogDescription>
+        </DialogHeader>
+
+        {/* Fixed Search Bar */}
+        <div className="flex-shrink-0 px-4 pb-4 border-b bg-background">
           <div className="flex gap-2">
-            <Input value={searchText} onChange={(e) => {setSearchText(e.target.value);}} />
-            <Button onClick={() => handleSearch(searchText)} className="mb-2">Buscar</Button>
+            <Input
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value)
+              }}
+              placeholder="Buscar productos..."
+            />
+            <Button onClick={() => handleSearch(searchText)}>Buscar</Button>
           </div>
-          {/* Responsive Grid - Better for different screen sizes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+        </div>
+
+        {/* Scrollable Products Area */}
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {productList?.map((product) => (
-              <ProductCard key={product.id} product={product} handleAdd={onProductSelected}/>
+              <ProductCard key={product.id} product={product} handleAdd={onProductSelected} />
             ))}
           </div>
         </div>
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancelar</Button>
-            </DialogClose>
-
-            
-<DialogClose asChild>
-              <Button
-                onClick={() => {}}
-              >
-                Hecho
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
+        {/* Fixed Footer */}
+        <DialogFooter className="flex-shrink-0 p-2 pt-2 border-t">
+          <DialogClose asChild>
+            <Button variant="outline">Cancelar</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button onClick={() => {}}>Hecho</Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
-  );
+  )
 }

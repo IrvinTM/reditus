@@ -120,7 +120,7 @@ export default function Sales() {
     };
     setSaleItems([...saleItems, nsaleItem]);
 
-      toast("Product added")
+      toast.success("Product added", {description: newProduct.name})
   };
 
   const handleCompleteSale = async  () => {

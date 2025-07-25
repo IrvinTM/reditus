@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')!).render(
     </Routes>
 </BrowserRouter>
 
-    <Toaster />
+    <Toaster position="top-right"/>
 </ThemeProvider>
   </StrictMode>,
 
