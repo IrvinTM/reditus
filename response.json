@@ -1,0 +1,128 @@
+": {
+                "id": 1,
+                "name": "Example",
+                "code": "test11",
+                "barCode": "test11",
+                "measurementUnit": "unit",
+                "categories": [],
+                "description": "example",
+                "image": "http://image.com",
+                "cost": 100,
+                "taxes": [],
+                "priceIncludesTaxes": false,
+                "allowPriceChange": false,
+                "noTaxIncludedPrice": 33,
+                "taxIncludedPrice": 0,
+                "profitMargin": 20,
+                "salesPrice": 300,
+                "available": 0,
+                "stock": null,
+                "active": true,
+                "ageRestricted": false
+            },
+            "quantity": 1,
+            "priceAtSale": 300
+        }
+    ],
+    "date": "+57568-06-22T22:49:53Z",
+    "discount": 0,
+    "total": 324,
+    "cashRegister": {
+        "id": 1,
+        "balance": 0,
+        "transactions": [],
+        "sales": [
+            {
+                "id": 1,
+                "items": [],
+                "date": "+57568-05-13T20:32:05Z",
+                "discount": 0,
+                "total": 324,
+                "cashRegister": {
+                    "id": 1,
+                    "balance": 0,
+                    "transactions": [],
+                    "sales": [
+                        {
+                            "id": 1,
+                            "items": [],
+                            "date": "+57568-05-13T20:32:05Z",
+                            "discount": 0,
+                            "total": 324,
+                            "cashRegister": {
+                                "id": 1,
+                                "balance": 0,
+                                "transactions": [],
+                                "sales": [
+                                    {
+                                        "id": 1,
+                                        "items": [],
+                                        "date": "+57568-05-13T20:32:05Z",
+                                        "discount": 0,
+                                        "total": 324,
+                                        "cashRegister": {
+                                            "id": 1,
+                                            "balance": 0,
+                                            "transactions": [],
+                                            "sales": [
+                                                {
+                                                    "id": 1,
+                                                    "items": [],
+                                                    "date": "+57568-05-13T20:32:05Z",
+                                                    "discount": 0,
+                                                    "total": 324,
+                                                    "cashRegister": {
+                                                        "id": 1,
+                                                        "balance": 0,
+                                                        "transactions": [],
+                                                        "sales": [
+                                                            {
+                                                                "id": 1,
+                                                                "items": [],
+                                                                "date": "+57568-05-13T20:32:05Z",
+                                                                "discount": 0,
+                                                                "total": 324,
+                                                                "cashRegister": {
+                                                                    "id": 1,
+                                                                    "balance": 0,
+                                                                    "transactions": [],
+                                                                    "sales": [
+                                                                        {
+                                                                            "id": 1,
+                                                                            "items": [],
+                                                                            "date": "+57568-05-13T20:32:05Z",
+                                                                            "discount": 0,
+                                                                            "total": 324,
+                                                                            "cashRegister": {
+                                                                                "id": 1,
+                                                                                "balance": 0,
+                                                                                "transactions": [],
+                                                                                "sales": [
+                                                                                    {
+                                                                                        "id": 1,
+                                                                                        "items": [],
+                                                                                        "date": "+57568-05-13T20:32:05Z",
+                                                                                        "discount": 0,
+                                                                                        "total": 324,
+                                                                                        "cashRegister": {
+                                                                                            "id": 1,
+                                                                                            "balance": 0,
+                                                                                            "transactions": [],
+                                                                                            "sales": [
+                                                                                                {
+                                                                                                    "id": 1,
+                                                                                                    "items": [],
+                                                                                                    "date": "+57568-05-13T20:32:05Z",
+                                                                                                    "discount": 0,
+                                                                                                    "total": 324,
+                                                                                                    "cashRegister": {
+                                                                                                        "id": 1,
+                                                                                                        "balance": 0,
+                                                                                                        "transactions": [],
+                                                                                                        "sales": [
+                                                                                                            {
+                                                                                                                "id": 1,
+                                                                                                            }
+                                                                                                        ]
+                                                                                                    }
+                                                                                                                 
