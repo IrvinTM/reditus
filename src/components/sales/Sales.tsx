@@ -375,13 +375,14 @@ const res = await response.json()
                   <div className="space-y-2">
                     {/*TODO save the sale to a anon cust if the radiogroup is checked */}
                     <div className="flex items-start gap-3">
-        <Checkbox id="toggle" />
-        <Label htmlFor="toggle">Anonimo</Label>
+        <Checkbox defaultChecked onCheckedChange={() => setAnon(!anon)} id="toggle" />
+        <Label  htmlFor="toggle">Anonimo</Label>
       </div>
-                    <Label htmlFor="customerName">Nombre</Label>
+                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerName">Nombre</Label>
                     
                     <Input
                       id="customerName"
+                      disabled={anon}
                       value={customer?.name}
                       onChange={(e) =>
                         setCustomer({
@@ -393,10 +394,11 @@ const res = await response.json()
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerIdentification">
+                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerIdentification">
                       Identificacion
                     </Label>
                     <Input
+                      disabled={anon}
                       id="customerIdentification"
                       value={customer?.identification}
                       onChange={(e) =>
@@ -409,8 +411,9 @@ const res = await response.json()
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerPhone">Numero de telefono</Label>
+                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerPhone">Numero de telefono</Label>
                     <Input
+                      disabled={anon}
                       id="customerPhone"
                       placeholder="Ingresar el numero de telefono"
                       value={customer?.phoneNumber}
@@ -423,8 +426,9 @@ const res = await response.json()
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerEmail">Email</Label>
+                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerEmail">Email</Label>
                     <Input
+                      disabled={anon}
                       id="customerEmail"
                       type="email"
                       placeholder="Ingresar el email del cliente"
@@ -438,7 +442,7 @@ const res = await response.json()
                     />
                   </div>
                   <div className="space-y-2">
-                    <Button onClick={() => handleValidateCustomer()}>Validar cliente</Button>
+                    <Button disabled={anon} onClick={() => handleValidateCustomer()}>Validar cliente</Button>
                     <Dialog open={openDialog}> 
                       <DialogContent>
                         <DialogHeader>
