@@ -25,10 +25,11 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Layout from "../layout/Layout";
-import { Product, Sale, SaleItem } from "@/types/types";
+import { Customer, Product, Sale, SaleItem } from "@/types/types";
 import { SelectFromProducts } from "./SelectFromProducts";
 import { toPriceString } from "@/utils/utils";
-import { toast } from "sonner"
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 
 export default function Sales() {
   const exampleProduct = {
@@ -61,6 +62,8 @@ export default function Sales() {
   const [searchText, setSearchText] = useState("");
   const [cashChange, setCashChange] = useState<number>();
   const [cashAmount, setCashamount] = useState<number>();
+  const [customer, setCustomer] = useState<Customer>();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const subtotal = saleItems.reduce(
     (sum, saleItem) => sum + saleItem.priceAtSale * saleItem.quantity,
@@ -120,29 +123,66 @@ export default function Sales() {
     };
     setSaleItems([...saleItems, nsaleItem]);
 
-      toast.success("Product added", {description: newProduct.name})
+    toast.success("Product added", { description: newProduct.name });
   };
 
-  const handleCompleteSale = async  () => {
-    //TODO validate if customer exists or create a new one if it doesnt 
-    //TODO create a cash register in the backend 
+  const handleCompleteSale = async () => {
+    //TODO validate if customer exists or create a new one if it doesnt
+    //TODO create a cash register in the backend
     //TODO get the discount and customer from the actual sale
 
-   const sale: Sale = {cashRegisterID: 1, customerID:1, date: Date.now(), discount: 0, items: saleItems, total: total}
-    const response = await fetch(appUrl+"/api/sales/create", {
+    const sale: Sale = {
+      //hardcoded cash register id may not change until i decide to implement multiple cash registers
+      cashRegisterID: 1,
+      //hardcoded cust id
+      customerID: 1,
+      date: Date.now(),
+      discount: 0,
+      items: saleItems,
+      total: total,
+    };
+    const response = await fetch(appUrl + "/api/sales/create", {
       method: "post",
-      headers:{
-        "Content-Type": "application/json"
+      headers: {
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(sale)
-    })
-    if(response.ok){
-      toast("venta guardada")
+      body: JSON.stringify(sale),
+    });
+    if (response.ok) {
+      toast("venta guardada");
     }
     setSaleItems([]);
     setDiscount(0);
     setCustomerName("");
   };
+
+  const handleValidateCustomer = async () => {
+    let path:string
+    let value: string
+    if(customer?.phoneNumber){
+      path = "phone"
+      value = customer.phoneNumber
+    }else if(customer?.identification){
+      path = "identification"
+      value = customer.identification
+      console.log(value)
+    }else if(customer?.email){
+      path = "email"
+      value = customer.email
+    }else{
+      return
+    }
+    const response = await fetch(appUrl + "/api/customers/"+path+`/${value}`)
+const res = await response.json()
+    console.log(res)
+    if(response.status == 400){
+      setOpenDialog(true)
+      return
+    }else{
+      const res = await response.json()
+    console.log(res)
+    }
+  }
 
   return (
     <Layout>
@@ -194,7 +234,8 @@ export default function Sales() {
                         variant="outline"
                         size="icon"
                         onClick={() => handleQuantityChange(saleItem.id, 1)}
-                        className="h-8 w-8">
+                        className="h-8 w-8"
+                      >
                         <PlusCircle className="h-4 w-4" />
                       </Button>
                       <Button
@@ -301,11 +342,13 @@ export default function Sales() {
                         onChange={(e) => {
                           setCashamount(Number.parseFloat(e.target.value));
                         }}
-                        onKeyDown={() => {handleCalculateChange((cashAmount || 0), total);}}
+                        onKeyDown={() => {
+                          handleCalculateChange(cashAmount || 0, total);
+                        }}
                       />
                       <Button
                         onClick={() => {
-                          handleCalculateChange(cashAmount|| 0, total);
+                          handleCalculateChange(cashAmount || 0, total);
                         }}
                         variant="outline"
                       >
@@ -314,8 +357,8 @@ export default function Sales() {
                     </div>
                     <span>
                       {(cashChange || 0) > 0
-                        ? "El cambio es: " + toPriceString((cashChange || 0))
-                        : "Faltan: " + toPriceString((cashChange || 0))}
+                        ? "El cambio es: " + toPriceString(cashChange || 0)
+                        : "Faltan: " + toPriceString(cashChange || 0)}
                     </span>
                   </div>
                 )}
@@ -327,12 +370,41 @@ export default function Sales() {
                     <h3 className="font-medium">Informacion del cliente</h3>
                   </div>
                   <div className="space-y-2">
+                    {/*TODO save the sale to a anon cust if the radiogroup is checked */}
+                  <RadioGroup>
+                    <div className="flex items-center gap-3">
+        <RadioGroupItem value="anon" id="anon" />
+        <Label htmlFor="anon">Anonimo</Label>
+      </div>
+                                          </RadioGroup>
                     <Label htmlFor="customerName">Nombre</Label>
+                    
                     <Input
                       id="customerName"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
+                      value={customer?.name}
+                      onChange={(e) =>
+                        setCustomer({
+                          ...customer,
+                          name: e.target.value,
+                        } as Customer)
+                      }
                       placeholder="Ingresar el nombre del cliente"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="customerIdentification">
+                      Identificacion
+                    </Label>
+                    <Input
+                      id="customerIdentification"
+                      value={customer?.identification}
+                      onChange={(e) =>
+                        setCustomer({
+                          ...customer,
+                          identification: e.target.value,
+                        } as Customer)
+                      }
+                      placeholder="Ingresar la identificacion del cliente"
                     />
                   </div>
                   <div className="space-y-2">
@@ -340,6 +412,13 @@ export default function Sales() {
                     <Input
                       id="customerPhone"
                       placeholder="Ingresar el numero de telefono"
+                      value={customer?.phoneNumber}
+                      onChange={(e) =>
+                        setCustomer({
+                          ...customer,
+                          phoneNumber: e.target.value,
+                        } as Customer)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -348,7 +427,32 @@ export default function Sales() {
                       id="customerEmail"
                       type="email"
                       placeholder="Ingresar el email del cliente"
+                      value={customer?.email}
+                      onChange={(e) =>
+                        setCustomer({
+                          ...customer,
+                          email: e.target.value,
+                        } as Customer)
+                      }
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Button onClick={() => handleValidateCustomer()}>Validar cliente</Button>
+                    <Dialog open={openDialog}> 
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>
+                            No se encontro ningun cliente.
+                          </DialogTitle>
+                          <DialogDescription>
+                            ¿Desea registrar un nuevo cliente con esta informacion?
+                          </DialogDescription>
+                        </DialogHeader>
+                        <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+                        <Button>Registrar cliente</Button>
+                      </DialogContent>
+
+                    </Dialog>
                   </div>
                 </div>
               </TabsContent>

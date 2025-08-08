@@ -49,3 +49,11 @@ export type Sale = {
     customerID: number
 }
 
+export type Customer = {
+    id: number
+    name: string
+    identification: string
+    phoneNumber: string
+    email: string
+    sales: Sale[]
+}
