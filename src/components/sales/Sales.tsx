@@ -30,6 +30,7 @@ import { SelectFromProducts } from "./SelectFromProducts";
 import { toPriceString } from "@/utils/utils";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Sales() {
   const exampleProduct = {
@@ -64,6 +65,8 @@ export default function Sales() {
   const [cashAmount, setCashamount] = useState<number>();
   const [customer, setCustomer] = useState<Customer>();
   const [openDialog, setOpenDialog] = useState(false);
+  const [anon, setAnon] = useState(true);
+
 
   const subtotal = saleItems.reduce(
     (sum, saleItem) => sum + saleItem.priceAtSale * saleItem.quantity,
@@ -371,12 +374,10 @@ const res = await response.json()
                   </div>
                   <div className="space-y-2">
                     {/*TODO save the sale to a anon cust if the radiogroup is checked */}
-                  <RadioGroup>
-                    <div className="flex items-center gap-3">
-        <RadioGroupItem value="anon" id="anon" />
-        <Label htmlFor="anon">Anonimo</Label>
+                    <div className="flex items-start gap-3">
+        <Checkbox id="toggle" />
+        <Label htmlFor="toggle">Anonimo</Label>
       </div>
-                                          </RadioGroup>
                     <Label htmlFor="customerName">Nombre</Label>
                     
                     <Input
