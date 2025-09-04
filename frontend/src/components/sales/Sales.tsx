@@ -60,7 +60,7 @@ export default function Sales() {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [barcode, setBarcode] = useState("");
   const appUrl = import.meta.env.VITE_BACK_URL;
-  const [searchText, setSearchText] = useState("");
+  // const [searchText, setSearchText] = useState("");
   const [cashChange, setCashChange] = useState<number>();
   const [cashAmount, setCashamount] = useState<number>();
   const [customer, setCustomer] = useState<Customer>();
@@ -78,6 +78,7 @@ export default function Sales() {
   const handleCalculateChange = (amount: number, total: number) => {
     const change = amount * 100 - total;
     setCashChange(change);
+    customerName
   };
 
   const handleQuantityChange = (id: number, change: number) => {
@@ -92,12 +93,12 @@ export default function Sales() {
     );
   };
 
-  const handleSearch = async () => {
+/*   const handleSearch = async () => {
     const response = await fetch(
       appUrl + "/api/products/search/" + searchText,
       {}
     );
-  };
+  }; */
 
   const handleRemoveProduct = (id: number) => {
     setSaleItems(saleItems.filter((saleItem) => saleItem.id !== id));
