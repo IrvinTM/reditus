@@ -15,7 +15,7 @@ interface ProductCard {
   handleAdd: (product: Product) => void;
 }
 const ProductCard = ({ product, handleAdd }: ProductCard) => {
-  const [prod, setProd] = useState<Product>(product);
+  const [prod] = useState<Product>(product);
 
   return (
     <Card className="w-full max-w-sm overflow-hidden">

@@ -10,11 +10,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import { Product } from "@/types/types";
-import { ChangeEvent, useEffect, useState } from "react";
-import { AddDialog } from "../products/AddProduct";
+/* import { ChangeEvent, useEffect, useState } from "react"; */
+/* import { AddDialog } from "../products/AddProduct"; */
 import ProductCard from "./ProductCard";
+import { useEffect, useState } from "react";
 
 
 interface selectProduct {
@@ -26,7 +27,7 @@ export function SelectFromProducts({
 }: selectProduct) {
   const appUrl = import.meta.env.VITE_BACK_URL;
  const [productList, setProductList] = useState<Product[]>();
-  const [exampleProduct, setExampleProduct] = useState<Product>({
+  /* const [exampleProduct, setExampleProduct] = useState<Product>({
     name: "Example",
     active: true,
     ageRestricted: false,
@@ -46,7 +47,7 @@ export function SelectFromProducts({
     salesPrice: 300,
     taxes: [],
     taxIncludedPrice: 0,
-  });
+  }); */
 
   const [searchText, setSearchText] = useState("");
 
