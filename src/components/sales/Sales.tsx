@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Layout from "../layout/Layout";
-import { Customer, Product, Sale, SaleItem } from "@/types/types";
+import { CreateSaleRequest, Customer, Product, Sale, SaleItem, SaleItemRequest } from "@/types/types";
 import { SelectFromProducts } from "./SelectFromProducts";
 import { toPriceString } from "@/utils/utils";
 import { toast } from "sonner";
@@ -135,14 +135,25 @@ export default function Sales() {
     //TODO create a cash register in the backend
     //TODO get the discount and customer from the actual sale
 
-    const sale: Sale = {
+    const itemsReq: SaleItemRequest[] = []
+
+    saleItems.forEach((item) => {
+     const i : SaleItemRequest = {
+       priceAtSale: item.priceAtSale,
+       productId: item.product.id,
+       quantity: item.quantity
+      }
+
+      itemsReq.push(i)
+          })
+
+    const sale: CreateSaleRequest = {
       //hardcoded cash register id may not change until i decide to implement multiple cash registers
       cashRegisterID: 1,
       //hardcoded cust id
-      customerID: 1,
-      date: Date.now(),
-      discount: 0,
-      items: saleItems,
+      customerID: customer?.id || 1,
+      discount: discount,
+      items: itemsReq,
       total: total,
     };
     const response = await fetch(appUrl + "/api/sales/create", {
