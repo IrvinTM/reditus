@@ -57,3 +57,18 @@ export type Customer = {
     email: string
     sales: Sale[]
 }
+
+export type SaleItemRequest = {
+    productId: number
+    quantity: number
+    priceAtSale: number
+}
+
+
+export type CreateSaleRequest = {
+    items: SaleItemRequest[]
+    discount: number
+    total: number
+    cashRegisterID: number
+    customerID: number
+}
