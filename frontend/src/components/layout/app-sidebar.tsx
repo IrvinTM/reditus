@@ -74,7 +74,7 @@ const data = {
         },
         {
           title: "Historial de ventas",
-          url: "#",
+          url: "/historialdeventas",
         },
       ],
     },
@@ -138,7 +138,7 @@ const data = {
     },
     {
       name: "Historial de ventas",
-      url: "#",
+      url: "historialdeventas",
       icon: History,
     },
   ],

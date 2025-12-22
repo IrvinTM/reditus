@@ -8,6 +8,7 @@ import { Settings } from 'lucide-react';
 import Products from './components/products/ProductsPage.tsx';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from './components/theme-provider.tsx';
+import SaleHistory from './components/sales/SaleHistory.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/productos" element={<Products/>} />
       <Route path="/vender" element={<Sales/>} />
       <Route path="/ajustes" element={<Settings/>} />
+      <Route path="/historialdeventas" element={<SaleHistory/>} />
 
     </Routes>
 </BrowserRouter>

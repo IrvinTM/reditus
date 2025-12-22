@@ -42,7 +42,7 @@ export type SaleItem = {
 export type Sale = {
     id?: number
     items: SaleItem[]
-    date: number
+    date: string
     discount: number
     total: number
     cashRegisterID: number
@@ -72,3 +72,14 @@ export type CreateSaleRequest = {
     cashRegisterID: number
     customerID: number
 }
+
+export type SalesHistoryData = {
+  content: Sale[]
+  customPage: {
+    totalElements: number
+    totalPages: number
+    number: number
+    size: number
+  }
+}
+
