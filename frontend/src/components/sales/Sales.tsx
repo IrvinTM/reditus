@@ -120,13 +120,27 @@ export default function Sales() {
   };
 
   const addProduct = (newProduct: Product) => {
-    const nsaleItem = {
-      id: Math.random() * 2000,
-      product: newProduct,
-      quantity: 1,
-      priceAtSale: newProduct.salesPrice,
-    };
-    setSaleItems([...saleItems, nsaleItem]);
+    const existingItem = saleItems.find(
+      (item) => item.product.id === newProduct.id
+    );
+
+    if (existingItem) {
+      setSaleItems(
+        saleItems.map((item) =>
+          item.product.id === newProduct.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      const nsaleItem = {
+        id: Math.random() * 2000,
+        product: newProduct,
+        quantity: 1,
+        priceAtSale: newProduct.salesPrice,
+      };
+      setSaleItems([...saleItems, nsaleItem]);
+    }
 
     toast.success("Product added", { description: newProduct.name });
   };
