@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MinusCircle,
   PlusCircle,
@@ -75,11 +75,12 @@ export default function Sales() {
   const tax = subtotal * 0.08; // 8% tax rate
   const total = subtotal + tax - discount;
 
-  const handleCalculateChange = (amount: number, total: number) => {
-    const change = amount * 100 - total;
-    setCashChange(change);
-    customerName
-  };
+  useEffect(() => {
+    if (cashAmount !== undefined) {
+      const change = cashAmount * 100 - total;
+      setCashChange(change);
+    }
+  }, [cashAmount, total]);
 
   const handleQuantityChange = (id: number, change: number) => {
     setSaleItems(
@@ -355,20 +356,9 @@ const res = await response.json()
                         placeholder="0.00"
                         value={cashAmount}
                         onChange={(e) => {
-                          setCashamount(Number.parseFloat(e.target.value));
-                        }}
-                        onKeyDown={() => {
-                          handleCalculateChange(cashAmount || 0, total);
+                          setCashamount(Number.parseFloat(e.target.value) || 0);
                         }}
                       />
-                      <Button
-                        onClick={() => {
-                          handleCalculateChange(cashAmount || 0, total);
-                        }}
-                        variant="outline"
-                      >
-                        Calcular el cambio
-                      </Button>
                     </div>
                     <span>
                       {(cashChange || 0) > 0
