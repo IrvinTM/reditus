@@ -138,7 +138,7 @@ const data = {
     },
     {
       name: "Historial de ventas",
-      url: "historialdeventas",
+      url: "/historialdeventas",
       icon: History,
     },
   ],
