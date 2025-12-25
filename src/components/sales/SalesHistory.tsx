@@ -45,6 +45,10 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
     }
   }
 
+  const showSaleDetails = ()=>{
+    alert("showing sales details")
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -69,14 +73,14 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
             </TableHeader>
             <TableBody>
               {sales.length === 0 ? (
-                <TableRow>
+                <TableRow >
                   <TableCell colSpan={7} className="h-24 text-center">
                     No sales found.
                   </TableCell>
                 </TableRow>
               ) : (
                 sales.map((sale) => (
-                  <TableRow key={sale.id}>
+                  <TableRow onClick={()=> showSaleDetails()} key={sale.id}>
                     <TableCell className="font-mono text-sm">#{sale.id}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{formatDate(sale.date.toString())}</TableCell>
                     <TableCell className="text-right">
