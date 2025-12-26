@@ -8,7 +8,7 @@ import { Settings } from 'lucide-react';
 import Products from './components/products/ProductsPage.tsx';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from './components/theme-provider.tsx';
-import SaleHistory from './components/sales/SaleHistory.tsx';
+import SaleHistory from './components/sales/SalesHistoryPage.tsx';
 import SaleViewPage from './components/sales/SaleViewPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
