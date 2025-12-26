@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Sale, SalesHistoryData } from "@/types/types"
 import { useNavigate } from "react-router"
+import { useState } from "react"
 
 interface SalesHistoryProps {
   data: SalesHistoryData
@@ -18,6 +19,7 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
   
   const { content: sales, customPage } = data
   const navigate = useNavigate()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -54,7 +56,8 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
   }
 
   return (
-    <Card>
+    <>
+    {loading ? loading : <Card>
       <CardHeader>
         <CardTitle>Sales History</CardTitle>
         <CardDescription>
@@ -143,6 +146,7 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </Card>}
+    </>
   )
 }
