@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Sale, SalesHistoryData } from "@/types/types"
+import { useNavigate } from "react-router"
 
 interface SalesHistoryProps {
   data: SalesHistoryData
@@ -13,7 +14,10 @@ interface SalesHistoryProps {
 }
 
 export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
+
+  
   const { content: sales, customPage } = data
+  const navigate = useNavigate()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -80,7 +84,7 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
                 </TableRow>
               ) : (
                 sales.map((sale) => (
-                  <TableRow onClick={()=> showSaleDetails()} key={sale.id}>
+                  <TableRow  onClick={()=> navigate(`/ventas/${sale.id}`)} key={sale.id}>
                     <TableCell className="font-mono text-sm">#{sale.id}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{formatDate(sale.date.toString())}</TableCell>
                     <TableCell className="text-right">

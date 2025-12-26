@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Sale } from "@/types/types"
-import { Printer } from "lucide-react"
+import { Product, Sale, SaleItem, SaleItemResponse, SaleResponse } from "@/types/types"
+import { Printer, Users } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { data, useParams } from "react-router"
 import { Spinner } from "../ui/spinner"
@@ -11,14 +11,13 @@ import { Spinner } from "../ui/spinner"
 const appUrl = import.meta.env.VITE_BACK_URL;
 
 // Placeholder data - replace with actual data fetching
-const saleData = {
+const saleData:SaleResponse  = {
   id: 2,
   items: [
     {
       id: 2,
       productId: 1,
       priceAtSale: 300,
-      saleId: 0,
       quantity: 1,
     }
   ],
@@ -30,41 +29,41 @@ const saleData = {
 }
 
 
-// Placeholder function to get product details
-// Replace this with actual API call or database query
-function getProductDetails(productId: number) {
 
-  return {
-    name: `Product ${productId}`,
-    sku: `SKU-${productId}`,
-  }
-}
+
+
 
 export default function SaleView() {
   const receiptRef = useRef<HTMLDivElement>(null)
 
 
   const { saleId } = useParams()
-  const [sale, setSale] = useState<Sale>(saleData)
+  const [sale, setSale] = useState<SaleResponse>(saleData)
   const [loading, setLoading] = useState<boolean>(false)
+  const [products, setProducts] = useState<Product[]>([])
+
 
   //
   useEffect(() => {
     setLoading(true)
     fetch(`${appUrl}/api/sales/sale/${saleId}`)
       .then(async (data) => await data.json())
-      .then((data) => {
+      .then(async (data) => {
         console.log(data)
-        setLoading(false)
         setSale(data)
+        const productPromises = data.items.map((item: SaleItemResponse) =>
+          fetch(`${appUrl}/api/products/${item.productId}`).then((res) => res.json())
+        );
+        const fetchedProducts = await Promise.all(productPromises);
+        setProducts(fetchedProducts);
+        setLoading(false)
       })
-      .catch((e) => console.log(e))
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      })
 
   }, [])
-
-
-
-
 
   const handlePrint = () => {
     if (receiptRef.current) {
@@ -214,14 +213,15 @@ export default function SaleView() {
                     <div className="receipt-items mb-6">
                       <h3 className="mb-4 text-lg font-semibold">Items</h3>
                       <div className="space-y-3">
-                        {sale.items.map((item) => {
-                          const product = getProductDetails(item.productId)
+                        {sale.items.map((item: SaleItemResponse) => {
+                          const product = products.find((p) => p.id === item.productId);
                           return (
                             <div key={item.id} className="space-y-1">
                               <div className="item-row flex justify-between">
                                 <div className="flex-1">
-                                  <div className="font-medium">{product.name}</div>
-                                  <div className="text-xs text-muted-foreground">{product.sku}</div>
+                                  <div className="font-medium">{product?.name}</div>
+
+                                  <div className="text-xs text-muted-foreground">{product?.barCode}</div>
                                 </div>
                                 <div className="text-right">
                                   <div className="font-semibold">{formatCurrency(item.priceAtSale * item.quantity)}</div>

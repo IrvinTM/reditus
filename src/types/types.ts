@@ -83,3 +83,19 @@ export type SalesHistoryData = {
   }
 }
 
+export type SaleItemResponse = {
+    id: number;
+    productId: number;
+    quantity: number;
+    priceAtSale: number;
+}
+
+export type SaleResponse = {
+    id?: number
+    items: SaleItemResponse[]
+    date: string
+    discount: number
+    total: number
+    cashRegisterID: number
+    customerID: number
+}
