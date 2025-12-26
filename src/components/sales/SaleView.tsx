@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Sale } from "@/types/types"
 import { Printer } from "lucide-react"
-import { useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { data, useParams } from "react-router"
+
+
+const appUrl = import.meta.env.VITE_BACK_URL;
 
 // Placeholder data - replace with actual data fetching
 const saleData = {
@@ -51,9 +56,11 @@ const saleData = {
   customerID: 1,
 }
 
+
 // Placeholder function to get product details
 // Replace this with actual API call or database query
 function getProductDetails(productId: number) {
+    
   return {
     name: `Product ${productId}`,
     sku: `SKU-${productId}`,
@@ -62,6 +69,24 @@ function getProductDetails(productId: number) {
 
 export default function SaleView() {
   const receiptRef = useRef<HTMLDivElement>(null)
+
+
+ const { saleId } = useParams()
+ const [sale, setSale] = useState<Sale>()
+//printing twice xd
+useEffect(()=>{
+fetch(`${appUrl}/api/sales/sale/${saleId}`)
+ .then(async (data)=> await data.json())
+ .then((data)=> {
+  console.log(data)
+  setSale(data)
+})
+ .catch((e)=> console.log(e))
+}, [])
+
+ 
+
+ 
 
   const handlePrint = () => {
     if (receiptRef.current) {
@@ -164,7 +189,8 @@ export default function SaleView() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Sale #{saleData.id}</h1>
+            <h1 className="text-3xl font-bold">Sale #{saleId}
+            </h1>
             <p className="text-sm text-muted-foreground">{formatDate(saleData.date)}</p>
           </div>
           <Button onClick={handlePrint} size="lg">
