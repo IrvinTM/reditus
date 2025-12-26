@@ -22,7 +22,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/vender" element={<Sales/>} />
       <Route path="/ajustes" element={<Settings/>} />
       <Route path="/historialdeventas" element={<SaleHistory/>} />
-      <Route path="/sale" element={<SaleViewPage/>} />
+      <Route path="/sales/:saleId" element={<SaleViewPage/>} />
 
     </Routes>
 </BrowserRouter>
