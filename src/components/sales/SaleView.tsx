@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Product, Sale, SaleItem, SaleItemResponse, SaleResponse } from "@/types/types"
-import { Printer, Users } from "lucide-react"
+import { Product, SaleItemResponse, SaleResponse } from "@/types/types"
+import { Printer } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import { data, useParams } from "react-router"
+import { useParams } from "react-router"
 import { Spinner } from "../ui/spinner"
 
 

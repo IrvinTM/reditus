@@ -55,7 +55,8 @@ export type Customer = {
     identification: string
     phoneNumber: string
     email: string
-    sales: Sale[]
+    sales?: Sale[]
+    address?: string
 }
 
 export type SaleItemRequest = {

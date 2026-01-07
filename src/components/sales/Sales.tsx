@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Layout from "../layout/Layout";
-import { CreateSaleRequest, Customer, Product, Sale, SaleItem, SaleItemRequest } from "@/types/types";
+import { CreateSaleRequest, Customer, Product, SaleItem, SaleItemRequest } from "@/types/types";
 import { SelectFromProducts } from "./SelectFromProducts";
 import { toPriceString } from "@/utils/utils";
 import { toast } from "sonner";
@@ -56,7 +56,6 @@ export default function Sales() {
   };
   const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   const [discount, setDiscount] = useState(0);
-  const [customerName, setCustomerName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [barcode, setBarcode] = useState("");
   const appUrl = import.meta.env.VITE_BACK_URL;
@@ -179,11 +178,17 @@ export default function Sales() {
       body: JSON.stringify(sale),
     });
     if (response.ok) {
-      toast("venta guardada");
+      toast("Venta guardada");
+      setSaleItems([]);
+      setDiscount(0);
+    } else {
+      try {
+        const errorData = await response.json();
+        toast.error(errorData.message || "Error al procesar la venta");
+      } catch (e) {
+        toast.error("Error al procesar la venta");
+      }
     }
-    setSaleItems([]);
-    setDiscount(0);
-    setCustomerName("");
   };
 
   const handleValidateCustomer = async () => {

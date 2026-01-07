@@ -54,6 +54,10 @@ const data = {
           url: "/productos",
         },
         {
+            title: "Clientes",
+            url: "/clientes",
+        },
+        {
           title: "Proveedores",
           url: "#",
         },
