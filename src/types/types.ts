@@ -100,3 +100,8 @@ export type SaleResponse = {
     cashRegisterID: number
     customerID: number
 }
+
+export type CashRegister = {
+    id: number
+    balance: number
+}
