@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter, Route, Routes } from "react-router";
 import Sales from './components/sales/Sales.tsx';
-import { Settings } from 'lucide-react';
+import Settings from './components/Settings.tsx';
 import Products from './components/products/ProductsPage.tsx';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from './components/theme-provider.tsx';

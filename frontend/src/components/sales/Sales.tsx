@@ -161,9 +161,12 @@ export default function Sales() {
       itemsReq.push(i)
           })
 
+    const defaultCashRegisterId = localStorage.getItem("defaultCashRegisterId");
+    const cashRegisterID = defaultCashRegisterId ? parseInt(defaultCashRegisterId) : 1;
+
     const sale: CreateSaleRequest = {
-      //hardcoded cash register id may not change until i decide to implement multiple cash registers
-      cashRegisterID: 1,
+      // Use saved cash register ID or default to 1
+      cashRegisterID: cashRegisterID,
       //hardcoded cust id
       customerID: customer?.id || 1,
       discount: discount,
@@ -192,31 +195,63 @@ export default function Sales() {
   };
 
   const handleValidateCustomer = async () => {
-    let path:string
-    let value: string
-    if(customer?.phoneNumber){
-      path = "phone"
-      value = customer.phoneNumber
-    }else if(customer?.identification){
-      path = "identification"
-      value = customer.identification
-      console.log(value)
-    }else if(customer?.email){
-      path = "email"
-      value = customer.email
-    }else{
-      return
+    let path: string;
+    let value: string | undefined;
+
+    if (customer?.identification) {
+      path = "identification";
+      value = customer.identification;
+    } else if (customer?.phoneNumber) {
+      path = "phone";
+      value = customer.phoneNumber;
+    } else if (customer?.email) {
+      path = "email";
+      value = customer.email;
+    } else {
+      toast.warning("Ingrese un campo único para validar (Identificación, Teléfono o Email)");
+      return;
     }
-    const response = await fetch(appUrl + "/api/customers/"+path+`/${value}`)
-const res = await response.json()
-    console.log(res)
-    if(response.status == 400){
-      setOpenDialog(true)
-      return
-    }else{
-      const res = await response.json()
-    console.log(res)
+
+    if (!value) return;
+
+    try {
+      const response = await fetch(`${appUrl}/api/customers/${path}/${value}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCustomer(data);
+        toast.success("Cliente encontrado: " + data.name);
+      } else {
+        setOpenDialog(true);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al validar cliente");
     }
+  };
+
+  const validateField = async (type: string, value: string | undefined) => {
+    if (!value) return;
+    // Don't validate if we already have a full customer loaded with that ID (optional optimization, but let's keep simple)
+    
+    try {
+      const response = await fetch(`${appUrl}/api/customers/${type}/${value}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCustomer(data);
+        toast.success("Datos del cliente cargados");
+      } 
+      // If not found silently via onBlur, maybe just do nothing or small toast?
+      // The user might be typing a new customer.
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent, type: string, value: string | undefined) => {
+      if (e.key === 'Enter') {
+          e.preventDefault();
+          validateField(type, value);
+      }
   }
 
   return (
@@ -232,6 +267,11 @@ const res = await response.json()
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
                 className="flex-1"
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        handleAddProduct();
+                    }
+                }}
               />
               <Button onClick={handleAddProduct}>Agregar</Button>
               <SelectFromProducts
@@ -396,7 +436,14 @@ const res = await response.json()
                   <div className="space-y-2">
                     {/*TODO save the sale to a anon cust if the radiogroup is checked */}
                     <div className="flex items-start gap-3">
-        <Checkbox defaultChecked onCheckedChange={() => setAnon(!anon)} id="toggle" />
+        <Checkbox 
+            checked={anon} 
+            onCheckedChange={(checked) => {
+                setAnon(!!checked);
+                if(checked) setCustomer(undefined);
+            }} 
+            id="toggle" 
+        />
         <Label  htmlFor="toggle">Anonimo</Label>
       </div>
                     <Label className={anon ? "text-secondary" : "" } htmlFor="customerName">Nombre</Label>
@@ -404,12 +451,9 @@ const res = await response.json()
                     <Input
                       id="customerName"
                       disabled={anon}
-                      value={customer?.name}
+                      value={customer?.name || ""}
                       onChange={(e) =>
-                        setCustomer({
-                          ...customer,
-                          name: e.target.value,
-                        } as Customer)
+                        setCustomer(prev => ({ ...prev!, name: e.target.value } as Customer))
                       }
                       placeholder="Ingresar el nombre del cliente"
                     />
@@ -421,13 +465,12 @@ const res = await response.json()
                     <Input
                       disabled={anon}
                       id="customerIdentification"
-                      value={customer?.identification}
+                      value={customer?.identification || ""}
                       onChange={(e) =>
-                        setCustomer({
-                          ...customer,
-                          identification: e.target.value,
-                        } as Customer)
+                        setCustomer(prev => ({ ...prev!, identification: e.target.value } as Customer))
                       }
+                      onBlur={() => validateField("identification", customer?.identification)}
+                      onKeyDown={(e) => handleKeyDown(e, "identification", customer?.identification)}
                       placeholder="Ingresar la identificacion del cliente"
                     />
                   </div>
@@ -437,13 +480,12 @@ const res = await response.json()
                       disabled={anon}
                       id="customerPhone"
                       placeholder="Ingresar el numero de telefono"
-                      value={customer?.phoneNumber}
+                      value={customer?.phoneNumber || ""}
                       onChange={(e) =>
-                        setCustomer({
-                          ...customer,
-                          phoneNumber: e.target.value,
-                        } as Customer)
+                        setCustomer(prev => ({ ...prev!, phoneNumber: e.target.value } as Customer))
                       }
+                      onBlur={() => validateField("phone", customer?.phoneNumber)}
+                      onKeyDown={(e) => handleKeyDown(e, "phone", customer?.phoneNumber)}
                     />
                   </div>
                   <div className="space-y-2">
@@ -453,18 +495,17 @@ const res = await response.json()
                       id="customerEmail"
                       type="email"
                       placeholder="Ingresar el email del cliente"
-                      value={customer?.email}
+                      value={customer?.email || ""}
                       onChange={(e) =>
-                        setCustomer({
-                          ...customer,
-                          email: e.target.value,
-                        } as Customer)
+                        setCustomer(prev => ({ ...prev!, email: e.target.value } as Customer))
                       }
+                      onBlur={() => validateField("email", customer?.email)}
+                      onKeyDown={(e) => handleKeyDown(e, "email", customer?.email)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Button disabled={anon} onClick={() => handleValidateCustomer()}>Validar cliente</Button>
-                    <Dialog open={openDialog}> 
+                    <Button disabled={anon} onClick={handleValidateCustomer}>Validar cliente</Button>
+                    <Dialog open={openDialog} onOpenChange={setOpenDialog}> 
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>
@@ -474,8 +515,14 @@ const res = await response.json()
                             ¿Desea registrar un nuevo cliente con esta informacion?
                           </DialogDescription>
                         </DialogHeader>
-                        <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
-                        <Button>Registrar cliente</Button>
+                        <div className="flex justify-end gap-2 mt-4">
+                             <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancelar</Button>
+                             {/* Ideally this would open the AddCustomer dialog or navigate to create page */}
+                             <Button onClick={() => {
+                                 setOpenDialog(false);
+                                 toast.info("Por favor complete los datos y cree el cliente desde la sección Clientes (Próximamente creación rápida aquí)");
+                             }}>Entendido</Button>
+                        </div>
                       </DialogContent>
 
                     </Dialog>

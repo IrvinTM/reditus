@@ -112,7 +112,7 @@ const data = {
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/ajustes",
         },
         {
           title: "Tema",
