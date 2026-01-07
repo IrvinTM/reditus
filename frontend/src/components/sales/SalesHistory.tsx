@@ -5,9 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Sale, SalesHistoryData } from "@/types/types"
+import { SalesHistoryData } from "@/types/types"
 import { useNavigate } from "react-router"
-import { useState } from "react"
 
 interface SalesHistoryProps {
   data: SalesHistoryData
@@ -19,7 +18,6 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
   
   const { content: sales, customPage } = data
   const navigate = useNavigate()
-  const [loading, setLoading] = useState<boolean>(false)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -51,13 +49,9 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
     }
   }
 
-  const showSaleDetails = ()=>{
-    alert("showing sales details")
-  }
-
   return (
     <>
-    {loading ? loading : <Card>
+    <Card>
       <CardHeader>
         <CardTitle>Sales History</CardTitle>
         <CardDescription>
@@ -146,7 +140,7 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
           </div>
         </div>
       </CardContent>
-    </Card>}
+    </Card>
     </>
   )
 }

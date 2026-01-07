@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { ThemeProvider } from './components/theme-provider.tsx';
 import SaleHistory from './components/sales/SalesHistoryPage.tsx';
 import SaleViewPage from './components/sales/SaleViewPage.tsx';
+import CustomersPage from './components/customers/CustomersPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/productos" element={<Products/>} />
+      <Route path="/clientes" element={<CustomersPage/>} />
       <Route path="/vender" element={<Sales/>} />
       <Route path="/ajustes" element={<Settings/>} />
       <Route path="/historialdeventas" element={<SaleHistory/>} />
