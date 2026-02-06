@@ -26,6 +26,7 @@ const saleData:SaleResponse  = {
   total: 1620,
   cashRegisterID: 1,
   customerID: 1,
+  customerName: ""
 }
 
 

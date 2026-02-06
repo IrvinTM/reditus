@@ -162,7 +162,7 @@ export default function Sales() {
     })
 
     const defaultCashRegisterId = localStorage.getItem("defaultCashRegisterId");
-    const cashRegisterID = parseInt(defaultCashRegisterId) | 1;
+    const cashRegisterID = parseInt(defaultCashRegisterId || "1");
 
     const sale: CreateSaleRequest = {
       // Use saved cash register ID or default to 1
