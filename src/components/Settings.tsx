@@ -35,18 +35,20 @@ export default function Settings() {
         if (savedId && data.content.some((r: CashRegister) => r.id.toString() === savedId)) {
           setSelectedRegisterId(savedId);
         } else if (data.content.length > 0) {
-           // Default to first if not set or saved ID not found
-           const firstId = data.content[0].id.toString();
-           setSelectedRegisterId(firstId);
-           // Optional: Auto-save default if none was set? 
-           // Better let user explicitly save, but for "default behavior" it works.
+          // Default to first if not set or saved ID not found
+          const firstId = data.content[0].id.toString();
+          setSelectedRegisterId(firstId);
+          // Optional: Auto-save default if none was set? 
+          // Better let user explicitly save, but for "default behavior" it works.
+        } else if (data.content.length === 0) {
+          createDefaultCashRegister()
         }
       })
       .catch((err) => console.error("Error fetching cash registers:", err));
   };
 
   useEffect(() => {
-    fetchCashRegisters();
+    fetchCashRegisters()
   }, []);
 
   const handleSave = () => {
@@ -57,6 +59,46 @@ export default function Settings() {
       });
     }
   };
+  //create default cash register if it does not exist i need to first check if
+  //the cash re 1 does not exist
+  const createDefaultCashRegister = async () => {
+
+    const cashRegisterDefault: CashRegister = cashRegisters[0];
+
+    if (!cashRegisterDefault) {
+      try {
+        const response = await fetch(`${appUrl}/api/cashregister/create`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ balance: 0 }),
+        });
+
+        if (response.ok) {
+          const newRegister = await response.json();
+          toast.success("Caja registradora creada", {
+            description: `Se ha creado la caja #${newRegister.id}`
+          });
+          fetchCashRegisters();
+          // If it's the first one, select it
+          if (cashRegisters.length === 1) {
+            setSelectedRegisterId(newRegister.id.toString());
+            handleSave()
+
+          }
+        } else {
+          toast.error("Error al crear caja registradora");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Error de conexión");
+      }
+
+    } else {
+      toast("ya hay cajas registradoras")
+    }
+
+
+  }
 
   const handleCreateRegister = async () => {
     try {
@@ -69,12 +111,12 @@ export default function Settings() {
       if (response.ok) {
         const newRegister = await response.json();
         toast.success("Caja registradora creada", {
-            description: `Se ha creado la caja #${newRegister.id}`
+          description: `Se ha creado la caja #${newRegister.id}`
         });
         fetchCashRegisters();
         // If it's the first one, select it
         if (cashRegisters.length === 0) {
-             setSelectedRegisterId(newRegister.id.toString());
+          setSelectedRegisterId(newRegister.id.toString());
         }
       } else {
         toast.error("Error al crear caja registradora");
@@ -89,7 +131,7 @@ export default function Settings() {
     <Layout>
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Ajustes</h1>
-        
+
         <div className="grid gap-6">
           <Card>
             <CardHeader>
@@ -102,29 +144,29 @@ export default function Settings() {
               <div className="flex flex-col gap-4">
                 <label className="text-sm font-medium">Caja Registradora Predeterminada</label>
                 <div className="flex gap-2">
-                    <Select
+                  <Select
                     value={selectedRegisterId}
                     onValueChange={setSelectedRegisterId}
-                    >
+                  >
                     <SelectTrigger className="w-[280px]">
-                        <SelectValue placeholder="Seleccionar caja..." />
+                      <SelectValue placeholder="Seleccionar caja..." />
                     </SelectTrigger>
                     <SelectContent>
-                        {cashRegisters.map((register) => (
+                      {cashRegisters.map((register) => (
                         <SelectItem key={register.id} value={register.id.toString()}>
-                            Caja #{register.id} (Balance: ${register.balance})
+                          Caja #{register.id} (Balance: ${register.balance})
                         </SelectItem>
-                        ))}
+                      ))}
                     </SelectContent>
-                    </Select>
-                    <Button variant="outline" size="icon" onClick={handleCreateRegister} title="Crear nueva caja">
-                        <Plus className="h-4 w-4" />
-                    </Button>
+                  </Select>
+                  <Button variant="outline" size="icon" onClick={handleCreateRegister} title="Crear nueva caja">
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
                 {cashRegisters.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-yellow-600">
-                        No hay cajas registradas. Crea una nueva para comenzar a vender.
-                    </p>
+                  <p className="text-sm text-muted-foreground text-yellow-600">
+                    No hay cajas registradas. Crea una nueva para comenzar a vender.
+                  </p>
                 )}
               </div>
             </CardContent>
