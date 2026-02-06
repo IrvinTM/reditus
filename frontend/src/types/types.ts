@@ -47,6 +47,7 @@ export type Sale = {
     total: number
     cashRegisterID: number
     customerID: number
+    customerName: string
 }
 
 export type Customer = {
@@ -99,6 +100,7 @@ export type SaleResponse = {
     total: number
     cashRegisterID: number
     customerID: number
+    customerName: string
 }
 
 export type CashRegister = {

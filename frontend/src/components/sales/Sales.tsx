@@ -93,12 +93,12 @@ export default function Sales() {
     );
   };
 
-/*   const handleSearch = async () => {
-    const response = await fetch(
-      appUrl + "/api/products/search/" + searchText,
-      {}
-    );
-  }; */
+  /*   const handleSearch = async () => {
+      const response = await fetch(
+        appUrl + "/api/products/search/" + searchText,
+        {}
+      );
+    }; */
 
   const handleRemoveProduct = (id: number) => {
     setSaleItems(saleItems.filter((saleItem) => saleItem.id !== id));
@@ -152,17 +152,17 @@ export default function Sales() {
     const itemsReq: SaleItemRequest[] = []
 
     saleItems.forEach((item) => {
-     const i : SaleItemRequest = {
-       priceAtSale: item.priceAtSale,
-       productId: item.product.id,
-       quantity: item.quantity
+      const i: SaleItemRequest = {
+        priceAtSale: item.priceAtSale,
+        productId: item.product.id,
+        quantity: item.quantity
       }
 
       itemsReq.push(i)
-          })
+    })
 
     const defaultCashRegisterId = localStorage.getItem("defaultCashRegisterId");
-    const cashRegisterID = defaultCashRegisterId ? parseInt(defaultCashRegisterId) : 1;
+    const cashRegisterID = parseInt(defaultCashRegisterId) | 1;
 
     const sale: CreateSaleRequest = {
       // Use saved cash register ID or default to 1
@@ -232,14 +232,14 @@ export default function Sales() {
   const validateField = async (type: string, value: string | undefined) => {
     if (!value) return;
     // Don't validate if we already have a full customer loaded with that ID (optional optimization, but let's keep simple)
-    
+
     try {
       const response = await fetch(`${appUrl}/api/customers/${type}/${value}`);
       if (response.ok) {
         const data = await response.json();
         setCustomer(data);
         toast.success("Datos del cliente cargados");
-      } 
+      }
       // If not found silently via onBlur, maybe just do nothing or small toast?
       // The user might be typing a new customer.
     } catch (e) {
@@ -248,10 +248,10 @@ export default function Sales() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent, type: string, value: string | undefined) => {
-      if (e.key === 'Enter') {
-          e.preventDefault();
-          validateField(type, value);
-      }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      validateField(type, value);
+    }
   }
 
   return (
@@ -268,9 +268,9 @@ export default function Sales() {
                 onChange={(e) => setBarcode(e.target.value)}
                 className="flex-1"
                 onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        handleAddProduct();
-                    }
+                  if (e.key === 'Enter') {
+                    handleAddProduct();
+                  }
                 }}
               />
               <Button onClick={handleAddProduct}>Agregar</Button>
@@ -436,18 +436,18 @@ export default function Sales() {
                   <div className="space-y-2">
                     {/*TODO save the sale to a anon cust if the radiogroup is checked */}
                     <div className="flex items-start gap-3">
-        <Checkbox 
-            checked={anon} 
-            onCheckedChange={(checked) => {
-                setAnon(!!checked);
-                if(checked) setCustomer(undefined);
-            }} 
-            id="toggle" 
-        />
-        <Label  htmlFor="toggle">Anonimo</Label>
-      </div>
-                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerName">Nombre</Label>
-                    
+                      <Checkbox
+                        checked={anon}
+                        onCheckedChange={(checked) => {
+                          setAnon(!!checked);
+                          if (checked) setCustomer(undefined);
+                        }}
+                        id="toggle"
+                      />
+                      <Label htmlFor="toggle">Anonimo</Label>
+                    </div>
+                    <Label className={anon ? "text-secondary" : ""} htmlFor="customerName">Nombre</Label>
+
                     <Input
                       id="customerName"
                       disabled={anon}
@@ -459,7 +459,7 @@ export default function Sales() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerIdentification">
+                    <Label className={anon ? "text-secondary" : ""} htmlFor="customerIdentification">
                       Identificacion
                     </Label>
                     <Input
@@ -475,7 +475,7 @@ export default function Sales() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerPhone">Numero de telefono</Label>
+                    <Label className={anon ? "text-secondary" : ""} htmlFor="customerPhone">Numero de telefono</Label>
                     <Input
                       disabled={anon}
                       id="customerPhone"
@@ -489,7 +489,7 @@ export default function Sales() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className={anon ? "text-secondary" : "" } htmlFor="customerEmail">Email</Label>
+                    <Label className={anon ? "text-secondary" : ""} htmlFor="customerEmail">Email</Label>
                     <Input
                       disabled={anon}
                       id="customerEmail"
@@ -505,7 +505,7 @@ export default function Sales() {
                   </div>
                   <div className="space-y-2">
                     <Button disabled={anon} onClick={handleValidateCustomer}>Validar cliente</Button>
-                    <Dialog open={openDialog} onOpenChange={setOpenDialog}> 
+                    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>
@@ -516,12 +516,12 @@ export default function Sales() {
                           </DialogDescription>
                         </DialogHeader>
                         <div className="flex justify-end gap-2 mt-4">
-                             <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancelar</Button>
-                             {/* Ideally this would open the AddCustomer dialog or navigate to create page */}
-                             <Button onClick={() => {
-                                 setOpenDialog(false);
-                                 toast.info("Por favor complete los datos y cree el cliente desde la sección Clientes (Próximamente creación rápida aquí)");
-                             }}>Entendido</Button>
+                          <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancelar</Button>
+                          {/* Ideally this would open the AddCustomer dialog or navigate to create page */}
+                          <Button onClick={() => {
+                            setOpenDialog(false);
+                            toast.info("Por favor complete los datos y cree el cliente desde la sección Clientes (Próximamente creación rápida aquí)");
+                          }}>Entendido</Button>
                         </div>
                       </DialogContent>
 

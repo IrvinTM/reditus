@@ -107,9 +107,10 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge variant="outline" className="font-mono text-xs">
-                        C{sale.customerID}
-                      </Badge>
+                      <div className="flex flex-col items-center">
+                          <span className="font-medium">{sale.customerName}</span>
+                          <span className="text-xs text-muted-foreground">ID: {sale.customerID}</span>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
