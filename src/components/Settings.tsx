@@ -34,13 +34,13 @@ export default function Settings() {
         const savedId = localStorage.getItem("defaultCashRegisterId");
         if (savedId && data.content.some((r: CashRegister) => r.id.toString() === savedId)) {
           setSelectedRegisterId(savedId);
-        } else if (data.content.length > 0) {
+        } else if (data.content?.length > 0) {
           // Default to first if not set or saved ID not found
           const firstId = data.content[0].id.toString();
           setSelectedRegisterId(firstId);
           // Optional: Auto-save default if none was set? 
           // Better let user explicitly save, but for "default behavior" it works.
-        } else if (data.content.length === 0) {
+        } else if (data.content?.length === 0) {
           createDefaultCashRegister()
         }
       })
@@ -152,7 +152,7 @@ export default function Settings() {
                       <SelectValue placeholder="Seleccionar caja..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {cashRegisters.map((register) => (
+                      {cashRegisters?.map((register) => (
                         <SelectItem key={register.id} value={register.id.toString()}>
                           Caja #{register.id} (Balance: ${register.balance})
                         </SelectItem>
@@ -163,7 +163,7 @@ export default function Settings() {
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
-                {cashRegisters.length === 0 && (
+                {cashRegisters?.length === 0 && (
                   <p className="text-sm text-muted-foreground text-yellow-600">
                     No hay cajas registradas. Crea una nueva para comenzar a vender.
                   </p>
