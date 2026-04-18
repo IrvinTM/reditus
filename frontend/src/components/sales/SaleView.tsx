@@ -25,7 +25,7 @@ const saleData:SaleResponse  = {
   discount: 0,
   total: 1620,
   cashRegisterID: 1,
-  customerID: 1,
+  customerID: null,
   customerName: ""
 }
 
@@ -205,7 +205,7 @@ export default function SaleView() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Customer ID:</span>
-                        <span className="font-mono">{sale.customerID}</span>
+                        <span className="font-mono">{sale.customerID ?? "N/A"}</span>
                       </div>
                     </div>
 

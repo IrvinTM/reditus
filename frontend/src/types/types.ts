@@ -46,8 +46,8 @@ export type Sale = {
     discount: number
     total: number
     cashRegisterID: number
-    customerID: number
-    customerName: string
+    customerID: number | null
+    customerName?: string
 }
 
 export type Customer = {
@@ -58,6 +58,21 @@ export type Customer = {
     email: string
     sales?: Sale[]
     address?: string
+}
+
+export type Supplier = {
+    id: number
+    name: string
+    identification: string
+    phoneNumber: string
+    email: string
+    address?: string
+}
+
+export type AddStockRequest = {
+    productId: number
+    supplierId: number
+    quantity: number
 }
 
 export type SaleItemRequest = {
@@ -72,7 +87,7 @@ export type CreateSaleRequest = {
     discount: number
     total: number
     cashRegisterID: number
-    customerID: number
+    customerID: number | null
 }
 
 export type SalesHistoryData = {
@@ -99,8 +114,8 @@ export type SaleResponse = {
     discount: number
     total: number
     cashRegisterID: number
-    customerID: number
-    customerName: string
+    customerID: number | null
+    customerName?: string
 }
 
 export type CashRegister = {

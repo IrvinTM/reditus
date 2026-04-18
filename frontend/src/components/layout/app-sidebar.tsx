@@ -59,7 +59,7 @@ const data = {
         },
         {
           title: "Proveedores",
-          url: "#",
+          url: "/proveedores",
         },
         // {
         //   title: "Settings",

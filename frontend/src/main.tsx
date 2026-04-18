@@ -11,6 +11,7 @@ import { ThemeProvider } from './components/theme-provider.tsx';
 import SaleHistory from './components/sales/SalesHistoryPage.tsx';
 import SaleViewPage from './components/sales/SaleViewPage.tsx';
 import CustomersPage from './components/customers/CustomersPage.tsx';
+import SuppliersPage from './components/suppliers/SuppliersPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/" element={<App />} />
       <Route path="/productos" element={<Products/>} />
       <Route path="/clientes" element={<CustomersPage/>} />
+      <Route path="/proveedores" element={<SuppliersPage/>} />
       <Route path="/vender" element={<Sales/>} />
       <Route path="/ajustes" element={<Settings/>} />
       <Route path="/historialdeventas" element={<SaleHistory/>} />
