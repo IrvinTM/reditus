@@ -43,8 +43,11 @@ const ProductCard = ({ product, handleAdd }: ProductCard) => {
               {toPriceString(prod.salesPrice)}
             </span>
           </div>
+          <span className="text-sm text-muted-foreground">Stock: {prod.available}</span>
           <div className="flex gap-4">
-            <Button onClick={()=>handleAdd(prod)}>Add</Button>
+            <Button disabled={prod.available <= 0} onClick={()=>handleAdd(prod)}>
+              {prod.available <= 0 ? "Sin stock" : "Add"}
+            </Button>
           </div>
         </div>
       </CardContent>

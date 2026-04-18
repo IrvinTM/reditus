@@ -85,7 +85,13 @@ export default function Sales() {
     setSaleItems(
       saleItems.map((saleItem) => {
         if (saleItem.id === id) {
-          const newQuantity = Math.max(1, saleItem.quantity + change);
+          const maxAvailable = saleItem.product.available;
+          const nextQuantity = saleItem.quantity + change;
+          if (nextQuantity > maxAvailable) {
+            toast.error("No hay suficiente stock");
+            return saleItem;
+          }
+          const newQuantity = Math.max(1, nextQuantity);
           return { ...saleItem, quantity: newQuantity };
         }
         return saleItem;
@@ -119,11 +125,20 @@ export default function Sales() {
   };
 
   const addProduct = (newProduct: Product) => {
+    if (newProduct.available <= 0) {
+      toast.error("Este producto no tiene stock disponible");
+      return;
+    }
+
     const existingItem = saleItems.find(
       (item) => item.product.id === newProduct.id
     );
 
     if (existingItem) {
+      if (existingItem.quantity >= newProduct.available) {
+        toast.error("No hay suficiente stock para agregar otra unidad");
+        return;
+      }
       setSaleItems(
         saleItems.map((item) =>
           item.product.id === newProduct.id
@@ -167,8 +182,7 @@ export default function Sales() {
     const sale: CreateSaleRequest = {
       // Use saved cash register ID or default to 1
       cashRegisterID: cashRegisterID,
-      //hardcoded cust id
-      customerID: customer?.id || 1,
+      customerID: anon ? null : customer?.id ?? null,
       discount: discount,
       items: itemsReq,
       total: total,

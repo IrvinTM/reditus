@@ -108,8 +108,8 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex flex-col items-center">
-                          <span className="font-medium">{sale.customerName}</span>
-                          <span className="text-xs text-muted-foreground">ID: {sale.customerID}</span>
+                          <span className="font-medium">{sale.customerName || "Anónimo"}</span>
+                          <span className="text-xs text-muted-foreground">ID: {sale.customerID ?? "N/A"}</span>
                       </div>
                     </TableCell>
                   </TableRow>
