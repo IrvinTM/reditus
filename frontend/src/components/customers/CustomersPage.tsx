@@ -14,12 +14,18 @@ const CustomersPage = () => {
   const getCustomers = () => {
     fetch(appUrl + "/api/customers")
       .then((response) => {
+        if (!response.ok) {
+          setCustomerList([]);
+          return;
+        }
+
         response.json().then((data) => {
-          setCustomerList(data.content);
+          setCustomerList(data?.content ?? []);
         });
       })
       .catch((error: any) => {
         console.log(error);
+        setCustomerList([]);
       });
   };
 

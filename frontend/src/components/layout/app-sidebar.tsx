@@ -22,6 +22,7 @@ import { NavMain } from "./nav-main"
 import { NavQuickLinks } from "./nav-quick-links"
 import { NavUser } from "./nav-user"
 import { ModeToggle } from "../mode-toggle"
+import { useAuth } from "@/auth/AuthContext"
 
 // This is sample data.
 const data = {
@@ -149,6 +150,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth()
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -162,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ ...data.user, ...user }} />
 
       </SidebarFooter>
       <SidebarRail />
