@@ -12,6 +12,8 @@ import SaleHistory from './components/sales/SalesHistoryPage.tsx';
 import SaleViewPage from './components/sales/SaleViewPage.tsx';
 import CustomersPage from './components/customers/CustomersPage.tsx';
 import SuppliersPage from './components/suppliers/SuppliersPage.tsx';
+import UsersManagement from './components/users/UsersManagement.tsx';
+import ThemeSettings from './components/settings/ThemeSettings.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import ProtectedRoute from './auth/ProtectedRoute.tsx';
 import LoginPage from './auth/LoginPage.tsx';
@@ -29,6 +31,8 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/proveedores" element={<ProtectedRoute><SuppliersPage/></ProtectedRoute>} />
       <Route path="/vender" element={<ProtectedRoute><Sales/></ProtectedRoute>} />
       <Route path="/ajustes" element={<ProtectedRoute><Settings/></ProtectedRoute>} />
+      <Route path="/ajustes/tema" element={<ProtectedRoute><ThemeSettings/></ProtectedRoute>} />
+      <Route path="/usuarios" element={<ProtectedRoute><UsersManagement/></ProtectedRoute>} />
       <Route path="/historialdeventas" element={<ProtectedRoute><SaleHistory/></ProtectedRoute>} />
       <Route path="/ventas/:saleId" element={<ProtectedRoute><SaleViewPage/></ProtectedRoute>} />
 

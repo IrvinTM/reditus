@@ -122,3 +122,23 @@ export type CashRegister = {
     id: number
     balance: number
 }
+
+export type UserRole = "ADMINISTRADOR" | "CAJERO"
+
+export type User = {
+    id: number
+    username: string
+    role: UserRole
+    name: string
+    email: string
+    enabled: boolean
+}
+
+export type CreateUserRequest = {
+    username: string
+    password: string
+    role: UserRole
+    name?: string
+    email?: string
+    enabled?: boolean
+}
