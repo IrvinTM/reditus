@@ -3,12 +3,14 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 type AuthUser = {
   name?: string;
   email?: string;
+  role?: string;
 };
 
 type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: AuthUser;
+  isAdmin: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -46,6 +48,7 @@ async function loginWithJsonEndpoint(
       user = {
         name: data?.name ?? data?.user?.name ?? username,
         email: data?.email ?? data?.user?.email,
+        role: data?.role ?? data?.user?.role,
       };
     }
   } catch {
@@ -127,6 +130,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
         setUser({
           name: data?.name,
           email: data?.email,
+          role: data?.role,
         });
       })
       .catch(() => {
@@ -182,6 +186,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
       isAuthenticated: sessionAuthenticated && !isCheckingSession,
       isLoading: isCheckingSession,
       user,
+      isAdmin: user.role === "ADMINISTRADOR",
       login,
       logout,
     }),

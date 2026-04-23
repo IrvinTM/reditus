@@ -21,7 +21,6 @@ import { TeamSwitcher } from "./team-switcher"
 import { NavMain } from "./nav-main"
 import { NavQuickLinks } from "./nav-quick-links"
 import { NavUser } from "./nav-user"
-import { ModeToggle } from "../mode-toggle"
 import { useAuth } from "@/auth/AuthContext"
 
 // This is sample data.
@@ -117,7 +116,7 @@ const data = {
         },
         {
           title: "Tema",
-          url: "#",
+          url: "/ajustes/tema",
         },
         // {
         //   title: "Billing",
@@ -150,19 +149,35 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth()
+  const { user, isAdmin } = useAuth()
+
+  const currentUserTeam = {
+    name: user.name || user.email || "Usuario",
+    logo: isAdmin ? Command : AudioWaveform,
+    plan: isAdmin ? "Administrador" : "Cajero",
+  }
+
+  const navMain = data.navMain.map((section) => {
+    if (section.title !== "Ajustes" || !section.items) {
+      return section
+    }
+
+    return {
+      ...section,
+      items: isAdmin
+        ? [...section.items, { title: "Usuarios", url: "/usuarios" }]
+        : section.items,
+    }
+  })
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={[currentUserTeam]} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
         <NavQuickLinks projects={data.projects} />
-        <div className="pl-4">
-        <ModeToggle/>
-        </div>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{ ...data.user, ...user }} />
