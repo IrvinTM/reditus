@@ -10,35 +10,46 @@ import jakarta.persistence.OneToMany;
 
 @Entity
 public class CashRegister {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
+
+	private String name;
+
+	// cash currently in the drawer, in cents
 	private long balance;
+
 	@OneToMany(mappedBy = "cashRegister")
 	private List<Transaction> transactions;
+
 	@OneToMany(mappedBy = "cashRegister")
 	private List<Sale> sales;
 
-
-	public CashRegister(int balance, List<Transaction> transactions, List<Sale> sales) {
-		this.balance = balance;
-		this.transactions = transactions;
-		this.sales = sales;
+	public CashRegister() {
 	}
 
-	public CashRegister(){
-
+	public CashRegister(String name) {
+		this.name = name;
 	}
-	public CashRegister(CashRegister cashRegister){
-		this.balance = cashRegister.getBalance();
-		this.transactions = cashRegister.getTransactions();
+
+	public long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public long getBalance() {
 		return balance;
 	}
 
-	public void setBalance(int balance) {
+	public void setBalance(long balance) {
 		this.balance = balance;
 	}
 
@@ -46,20 +57,7 @@ public class CashRegister {
 		return transactions;
 	}
 
-	public void setTransactions(List<Transaction> transactions) {
-		this.transactions = transactions;
-	}
-
-	public long getId() {
-		return id;
-	}
-
 	public List<Sale> getSales() {
 		return sales;
 	}
-
-	public void setSales(List<Sale> sales) {
-		this.sales = sales;
-	}
-
 }

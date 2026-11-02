@@ -2,8 +2,10 @@
 
 import {
   ChevronsUpDown,
+  KeyRound,
   LogOut,
 } from "lucide-react"
+import { useNavigate } from "react-router"
 
 import {
   Avatar,
@@ -37,6 +39,7 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
+  const navigate = useNavigate()
 
   return (
     <SidebarMenu>
@@ -77,6 +80,10 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/cambiar-contrasena")}>
+              <KeyRound />
+              Cambiar contraseña
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => logout()}>
               <LogOut />
               Log out

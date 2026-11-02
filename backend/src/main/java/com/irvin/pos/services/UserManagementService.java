@@ -8,9 +8,12 @@ import com.irvin.pos.repositories.UserAccountRepository;
 import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserManagementService {
+
+    private static final int MIN_PASSWORD_LENGTH = 8;
 
     private final UserAccountRepository userAccountRepository;
     private final PasswordEncoder passwordEncoder;
@@ -31,9 +34,7 @@ public class UserManagementService {
         }
 
         String rawPassword = request.getPassword();
-        if (rawPassword == null || rawPassword.isBlank()) {
-            throw new IllegalArgumentException("password is required");
-        }
+        validatePassword(rawPassword);
 
         UserRole role = UserRole.from(request.getRole());
 
@@ -44,9 +45,34 @@ public class UserManagementService {
         account.setName(defaultIfBlank(request.getName(), username));
         account.setEmail(defaultIfBlank(request.getEmail(), username + "@local"));
         account.setEnabled(request.getEnabled() == null || request.getEnabled());
+        // the administrator chose this password, the user picks their own on first login
+        account.setMustChangePassword(true);
 
         UserAccount saved = userAccountRepository.save(account);
         return toDTO(saved);
+    }
+
+    @Transactional
+    public void changePassword(String username, String currentPassword, String newPassword) {
+        UserAccount account = userAccountRepository.findByUsername(username)
+            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        if (currentPassword == null || !passwordEncoder.matches(currentPassword, account.getPassword())) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta.");
+        }
+        validatePassword(newPassword);
+        if (passwordEncoder.matches(newPassword, account.getPassword())) {
+            throw new IllegalArgumentException("La nueva contraseña debe ser diferente a la actual.");
+        }
+        account.setPassword(passwordEncoder.encode(newPassword));
+        account.setMustChangePassword(false);
+        userAccountRepository.save(account);
+    }
+
+    private void validatePassword(String password) {
+        if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
+            throw new IllegalArgumentException(
+                "La contraseña debe tener al menos " + MIN_PASSWORD_LENGTH + " caracteres.");
+        }
     }
 
     public List<UserDTO> getAllUsers() {

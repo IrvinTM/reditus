@@ -1,6 +1,8 @@
 package com.irvin.pos.exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,5 +34,14 @@ public class GlobalExceptionsHandler {
                 ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
                                 req.getDescription(false).replace("uri=", ""));
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
+        // another register changed the same product or shift at the same time
+        @ExceptionHandler({ ObjectOptimisticLockingFailureException.class, DataIntegrityViolationException.class })
+        public ResponseEntity<ApiError> handleConflicts(RuntimeException e, WebRequest req) {
+                ApiError error = new ApiError(HttpStatus.CONFLICT.value(),
+                                "Los datos cambiaron mientras se procesaba la operación. Intente de nuevo.",
+                                req.getDescription(false).replace("uri=", ""));
+                return new ResponseEntity<>(error, HttpStatus.CONFLICT);
         }
 }

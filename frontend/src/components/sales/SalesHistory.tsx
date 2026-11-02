@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { SalesHistoryData } from "@/types/types"
 import { useNavigate } from "react-router"
+import { formatDateTime, saleStatusLabels } from "@/utils/utils"
 
 interface SalesHistoryProps {
   data: SalesHistoryData
@@ -18,17 +19,6 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
   
   const { content: sales, customPage } = data
   const navigate = useNavigate()
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date)
-  }
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -68,6 +58,8 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
                 <TableHead className="text-right">Items</TableHead>
                 <TableHead className="text-right">Discount</TableHead>
                 <TableHead className="text-right">Total</TableHead>
+                <TableHead className="text-center">Estado</TableHead>
+                <TableHead className="text-center">Cajero</TableHead>
                 <TableHead className="text-center">Register</TableHead>
                 <TableHead className="text-center">Customer</TableHead>
               </TableRow>
@@ -75,15 +67,15 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
             <TableBody>
               {sales.length === 0 ? (
                 <TableRow >
-                  <TableCell colSpan={7} className="h-24 text-center">
+                  <TableCell colSpan={9} className="h-24 text-center">
                     No sales found.
                   </TableCell>
                 </TableRow>
               ) : (
                 sales.map((sale) => (
-                  <TableRow  onClick={()=> navigate(`/ventas/${sale.id}`)} key={sale.id}>
+                  <TableRow className="cursor-pointer" onClick={()=> navigate(`/ventas/${sale.id}`)} key={sale.id}>
                     <TableCell className="font-mono text-sm">#{sale.id}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{formatDate(sale.date.toString())}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{formatDateTime(sale.date)}</TableCell>
                     <TableCell className="text-right">
                       {sale.items.length > 0 ? (
                         <Badge variant="secondary">
@@ -101,6 +93,12 @@ export function SalesHistory({ data, onPageChange }: SalesHistoryProps) {
                       )}
                     </TableCell>
                     <TableCell className="text-right font-semibold">{formatCurrency(sale.total)}</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant={sale.status === "COMPLETED" ? "secondary" : "destructive"}>
+                        {saleStatusLabels[sale.status]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center text-sm">{sale.cashierName ?? "—"}</TableCell>
                     <TableCell className="text-center">
                       <Badge variant="outline" className="font-mono text-xs">
                         R{sale.cashRegisterID}

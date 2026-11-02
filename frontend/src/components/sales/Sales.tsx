@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MinusCircle,
   PlusCircle,
   Trash2,
   Receipt,
-  CreditCard,
-  Banknote,
-  Wallet,
   User,
   Percent,
+  Plus,
+  Printer,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,61 +25,101 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Layout from "../layout/Layout";
-import { CreateSaleRequest, Customer, Product, SaleItem, SaleItemRequest } from "@/types/types";
+import {
+  CreateSaleRequest,
+  Customer,
+  PaymentMethod,
+  Product,
+  SaleItem,
+  SaleItemRequest,
+  SaleResponse,
+  Tax,
+} from "@/types/types";
 import { SelectFromProducts } from "./SelectFromProducts";
-import { toPriceString } from "@/utils/utils";
+import { apiErrorMessage, lineAmounts, paymentMethodLabels, toCents, toPriceString } from "@/utils/utils";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRegister } from "@/hooks/use-register";
+import { Link, useNavigate } from "react-router";
+import { AUTO_PRINT_KEY, fetchCompany, isAutoPrintEnabled, printReceipt } from "./Receipt";
 import { Checkbox } from "@/components/ui/checkbox";
 
+const PAYMENT_METHODS: PaymentMethod[] = ["CASH", "CARD", "MOBILE", "OTHER"];
+
+type PaymentRow = {
+  method: PaymentMethod;
+  /** as typed by the cashier, in currency units */
+  amount: string;
+};
+
 export default function Sales() {
-  const exampleProduct = {
-    id: 1,
-    name: "test",
-    code: "123456789",
-    barCode: "1233",
-    measurementUnit: "unit",
-    categories: [],
-    description: "This is a test product",
-    image: "imgurl",
-    cost: 1200,
-    taxes: "", // TODO create type tax
-    priceIncludesTaxes: true,
-    allowPriceChange: true,
-    noTaxIncludedPrice: 1200,
-    taxIncludedPrice: 1200,
-    profitMargin: 12,
-    salesPrice: 1200,
-    available: 2,
-    active: true,
-    ageRestricted: false,
-  };
   const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   const [discount, setDiscount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [discountOption, setDiscountOption] = useState("none");
+  const [customDiscount, setCustomDiscount] = useState("");
+  const [payments, setPayments] = useState<PaymentRow[]>([{ method: "CASH", amount: "" }]);
   const [barcode, setBarcode] = useState("");
+  const barcodeInput = useRef<HTMLInputElement>(null);
   const appUrl = import.meta.env.VITE_BACK_URL;
-  // const [searchText, setSearchText] = useState("");
-  const [cashChange, setCashChange] = useState<number>();
-  const [cashAmount, setCashamount] = useState<number>();
+  const [taxes, setTaxes] = useState<Tax[]>([]);
   const [customer, setCustomer] = useState<Customer>();
   const [openDialog, setOpenDialog] = useState(false);
   const [anon, setAnon] = useState(true);
-
-
-  const subtotal = saleItems.reduce(
-    (sum, saleItem) => sum + saleItem.priceAtSale * saleItem.quantity,
-    0
-  );
-  const tax = subtotal * 0.08; // 8% tax rate
-  const total = subtotal + tax - discount;
+  const [submitting, setSubmitting] = useState(false);
+  const [completedSale, setCompletedSale] = useState<SaleResponse | null>(null);
+  const [autoPrint, setAutoPrint] = useState(isAutoPrintEnabled());
+  const { registerId, register, shift, loading: registerLoading } = useRegister();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (cashAmount !== undefined) {
-      const change = cashAmount * 100 - total;
-      setCashChange(change);
+    fetch(`${appUrl}/api/taxes`)
+      .then((response) => (response.ok ? response.json() : []))
+      .then(setTaxes)
+      .catch(() => setTaxes([]));
+  }, []);
+
+  // preview only: the server computes the real amounts
+  const lines = saleItems.map((item) => lineAmounts(item.product, item.priceAtSale, item.quantity, taxes));
+  const subtotal = lines.reduce((sum, line) => sum + line.net, 0);
+  const tax = lines.reduce((sum, line) => sum + line.tax, 0);
+  const gross = lines.reduce((sum, line) => sum + line.total, 0);
+
+  useEffect(() => {
+    if (discountOption === "percentage") {
+      setDiscount(Math.round(gross * 0.1));
+    } else if (discountOption === "custom") {
+      setDiscount(Math.min(toCents(customDiscount), gross));
+    } else {
+      setDiscount(0);
     }
-  }, [cashAmount, total]);
+  }, [discountOption, customDiscount, gross]);
+
+  const total = Math.max(gross - discount, 0);
+  const paid = payments.reduce((sum, payment) => sum + toCents(payment.amount), 0);
+  const nonCashPaid = payments
+    .filter((payment) => payment.method !== "CASH")
+    .reduce((sum, payment) => sum + toCents(payment.amount), 0);
+  const hasCash = payments.some((payment) => payment.method === "CASH");
+  const change = paid - total;
+  const paymentError =
+    nonCashPaid > total
+      ? "Los pagos que no son en efectivo no pueden exceder el total"
+      : !hasCash && paid !== total
+        ? "Sin efectivo, los pagos deben sumar exactamente el total"
+        : paid < total
+          ? `Faltan ${toPriceString(total - paid)}`
+          : null;
+
+  const resetSale = () => {
+    setSaleItems([]);
+    setDiscountOption("none");
+    setCustomDiscount("");
+    setPayments([{ method: "CASH", amount: "" }]);
+    setAnon(true);
+    setCustomer(undefined);
+    barcodeInput.current?.focus();
+  };
 
   const handleQuantityChange = (id: number, change: number) => {
     setSaleItems(
@@ -99,32 +139,35 @@ export default function Sales() {
     );
   };
 
-  /*   const handleSearch = async () => {
-      const response = await fetch(
-        appUrl + "/api/products/search/" + searchText,
-        {}
-      );
-    }; */
+  const handlePriceChange = (id: number, value: string) => {
+    setSaleItems(saleItems.map((item) => (item.id === id ? { ...item, priceAtSale: toCents(value) } : item)));
+  };
 
   const handleRemoveProduct = (id: number) => {
     setSaleItems(saleItems.filter((saleItem) => saleItem.id !== id));
   };
 
-  const handleAddProduct = () => {
-    // In a real app, this would search for the product by barcode
-    if (barcode.trim()) {
-      const newSaleItem = {
-        id: Math.random() * 2000,
-        product: exampleProduct,
-        priceAtSale: Math.floor(Math.random() * 50) + 10,
-        quantity: 1,
-      };
-      setSaleItems([...saleItems, newSaleItem]);
-      setBarcode("");
+  const handleAddProduct = async () => {
+    const code = barcode.trim();
+    if (!code) {
+      return;
     }
+    setBarcode("");
+    const response = await fetch(`${appUrl}/api/products/barcode/${encodeURIComponent(code)}`);
+    const product: Product | null = response.ok ? await response.json().catch(() => null) : null;
+    if (!product) {
+      toast.error("No se encontró ningún producto con el código " + code);
+    } else {
+      addProduct(product);
+    }
+    barcodeInput.current?.focus();
   };
 
   const addProduct = (newProduct: Product) => {
+    if (!newProduct.active) {
+      toast.error("Este producto no está activo");
+      return;
+    }
     if (newProduct.available <= 0) {
       toast.error("Este producto no tiene stock disponible");
       return;
@@ -148,7 +191,7 @@ export default function Sales() {
       );
     } else {
       const nsaleItem = {
-        id: Math.random() * 2000,
+        id: Date.now() + Math.random(),
         product: newProduct,
         quantity: 1,
         priceAtSale: newProduct.salesPrice,
@@ -156,55 +199,68 @@ export default function Sales() {
       setSaleItems([...saleItems, nsaleItem]);
     }
 
-    toast.success("Product added", { description: newProduct.name });
+    toast.success("Producto agregado", { description: newProduct.name });
+  };
+
+  const updatePayment = (index: number, changes: Partial<PaymentRow>) => {
+    setPayments(payments.map((payment, i) => (i === index ? { ...payment, ...changes } : payment)));
+  };
+
+  const fillRemaining = (index: number) => {
+    const others = payments.reduce((sum, payment, i) => (i === index ? sum : sum + toCents(payment.amount)), 0);
+    updatePayment(index, { amount: (Math.max(total - others, 0) / 100).toFixed(2) });
   };
 
   const handleCompleteSale = async () => {
-    //TODO validate if customer exists or create a new one if it doesnt
-    //TODO create a cash register in the backend
-    //TODO get the discount and customer from the actual sale
+    if (!shift || registerId === null) {
+      toast.error("Abra un turno en la caja antes de vender");
+      return;
+    }
+    if (paymentError) {
+      toast.error(paymentError);
+      return;
+    }
 
-    const itemsReq: SaleItemRequest[] = []
-
-    saleItems.forEach((item) => {
-      const i: SaleItemRequest = {
-        priceAtSale: item.priceAtSale,
-        productId: item.product.id,
-        quantity: item.quantity
-      }
-
-      itemsReq.push(i)
-    })
-
-    const defaultCashRegisterId = localStorage.getItem("defaultCashRegisterId");
-    const cashRegisterID = parseInt(defaultCashRegisterId || "1");
+    const itemsReq: SaleItemRequest[] = saleItems.map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+      // the server uses the product price unless the product allows changing it
+      price: item.product.allowPriceChange ? item.priceAtSale : undefined,
+    }));
 
     const sale: CreateSaleRequest = {
-      // Use saved cash register ID or default to 1
-      cashRegisterID: cashRegisterID,
+      cashRegisterID: registerId,
       customerID: anon ? null : customer?.id ?? null,
       discount: discount,
       items: itemsReq,
-      total: total,
+      payments: payments
+        .filter((payment) => toCents(payment.amount) > 0)
+        .map((payment) => ({ method: payment.method, amount: toCents(payment.amount) })),
     };
-    const response = await fetch(appUrl + "/api/sales/create", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sale),
-    });
-    if (response.ok) {
-      toast("Venta guardada");
-      setSaleItems([]);
-      setDiscount(0);
-    } else {
-      try {
-        const errorData = await response.json();
-        toast.error(errorData.message || "Error al procesar la venta");
-      } catch (e) {
-        toast.error("Error al procesar la venta");
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(appUrl + "/api/sales/create", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sale),
+      });
+      if (!response.ok) {
+        toast.error(await apiErrorMessage(response, "Error al procesar la venta"));
+        return;
       }
+      const saved: SaleResponse = await response.json();
+      setCompletedSale(saved);
+      resetSale();
+      if (autoPrint) {
+        printReceipt(saved, await fetchCompany());
+      }
+    } catch {
+      toast.error("Error de conexión al procesar la venta");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -270,6 +326,19 @@ export default function Sales() {
 
   return (
     <Layout>
+      {!registerLoading && !shift && (
+        <div className="mx-4 mb-4 flex items-center gap-3 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-3 text-sm">
+          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+          <span className="flex-1">
+            {register
+              ? `${register.name ?? "La caja"} no tiene un turno abierto. Abra un turno para poder vender.`
+              : "No hay una caja configurada para este equipo."}
+          </span>
+          <Button size="sm" asChild>
+            <Link to="/caja">Ir a Caja</Link>
+          </Button>
+        </div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left side - Item list */}
         <Card className="h-[calc(100vh-120px)]">
@@ -277,6 +346,8 @@ export default function Sales() {
             <CardTitle>Venta</CardTitle>
             <div className="flex gap-2">
               <Input
+                ref={barcodeInput}
+                autoFocus
                 placeholder="Escanear o ingresar codigo de barras"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
@@ -303,9 +374,24 @@ export default function Sales() {
                   >
                     <div className="flex-1">
                       <div className="font-medium">{saleItem.product.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {toPriceString(saleItem.priceAtSale)} cada uno
-                      </div>
+                      {saleItem.product.allowPriceChange ? (
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <span>$</span>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            className="h-7 w-24"
+                            defaultValue={(saleItem.priceAtSale / 100).toFixed(2)}
+                            onBlur={(e) => handlePriceChange(saleItem.id, e.target.value)}
+                          />
+                          <span>cada uno</span>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-muted-foreground">
+                          {toPriceString(saleItem.priceAtSale)} cada uno
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -352,7 +438,7 @@ export default function Sales() {
                   <span>{toPriceString(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Impuesto (8%):</span>
+                  <span>Impuestos:</span>
                   <span>{toPriceString(tax)}</span>
                 </div>
                 {discount > 0 && (
@@ -384,62 +470,70 @@ export default function Sales() {
                 <TabsTrigger value="discount">Descuento</TabsTrigger>
               </TabsList>
               <TabsContent value="payment" className="space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-medium">Seleccionar metodo de pago</h3>
-                  <RadioGroup
-                    value={paymentMethod}
-                    onValueChange={setPaymentMethod}
-                    className="grid grid-cols-2 gap-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="cash" id="cash" />
-                      <Label htmlFor="cash" className="flex items-center gap-2">
-                        <Banknote className="h-4 w-4" /> Efectivo
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="card" id="card" />
-                      <Label htmlFor="card" className="flex items-center gap-2">
-                        <CreditCard className="h-4 w-4" /> Tarjeta
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="mobile" id="mobile" />
-                      <Label
-                        htmlFor="mobile"
-                        className="flex items-center gap-2"
+                <div className="space-y-3">
+                  <h3 className="font-medium">Pagos</h3>
+                  {payments.map((payment, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Select
+                        value={payment.method}
+                        onValueChange={(value) => updatePayment(index, { method: value as PaymentMethod })}
                       >
-                        <Wallet className="h-4 w-4" /> Pago con celular
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="other" id="other" />
-                      <Label htmlFor="other">Otro</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                {paymentMethod === "cash" && (
-                  <div className="space-y-2 pt-4">
-                    <Label htmlFor="cashAmount">Cantidad</Label>
-                    <div className="flex gap-2">
+                        <SelectTrigger className="w-44">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PAYMENT_METHODS.map((method) => (
+                            <SelectItem key={method} value={method}>
+                              {paymentMethodLabels[method]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <Input
-                        id="cashAmount"
                         type="number"
+                        step="0.01"
+                        min="0"
                         placeholder="0.00"
-                        value={cashAmount}
-                        onChange={(e) => {
-                          setCashamount(Number.parseFloat(e.target.value) || 0);
-                        }}
+                        value={payment.amount}
+                        onChange={(e) => updatePayment(index, { amount: e.target.value })}
                       />
+                      <Button variant="outline" onClick={() => fillRemaining(index)} title="Completar el total">
+                        Exacto
+                      </Button>
+                      {payments.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => setPayments(payments.filter((_, i) => i !== index))}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                    <span>
-                      {(cashChange || 0) > 0
-                        ? "El cambio es: " + toPriceString(cashChange || 0)
-                        : "Faltan: " + toPriceString(cashChange || 0)}
-                    </span>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPayments([...payments, { method: "CARD", amount: "" }])}
+                  >
+                    <Plus className="mr-1 h-4 w-4" /> Agregar otro pago
+                  </Button>
+                </div>
+                <div className="rounded-lg border p-3 text-sm space-y-1">
+                  <div className="flex justify-between">
+                    <span>Recibido:</span>
+                    <span>{toPriceString(paid)}</span>
                   </div>
-                )}
+                  {paymentError ? (
+                    <div className="text-destructive">{paymentError}</div>
+                  ) : (
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Cambio:</span>
+                      <span>{toPriceString(change)}</span>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               <TabsContent value="customer" className="space-y-4">
                 <div className="space-y-2">
@@ -549,45 +643,36 @@ export default function Sales() {
                     <Percent className="h-4 w-4" />
                     <h3 className="font-medium">Aplicar descuento</h3>
                   </div>
-                  <RadioGroup defaultValue="none" className="grid gap-2">
+                  <RadioGroup value={discountOption} onValueChange={setDiscountOption} className="grid gap-2">
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="none"
-                        id="none"
-                        onClick={() => setDiscount(0)}
-                      />
+                      <RadioGroupItem value="none" id="none" />
                       <Label htmlFor="none">Sin descuento</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="percentage"
-                        id="percentage"
-                        onClick={() => setDiscount(subtotal * 0.1)}
-                      />
+                      <RadioGroupItem value="percentage" id="percentage" />
                       <Label htmlFor="percentage">10% de descuento</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="fixed"
-                        id="fixed"
-                        onClick={() => setDiscount(5)}
-                      />
-                      <Label htmlFor="fixed">$5 de descuento</Label>
+                      <RadioGroupItem value="custom" id="custom" />
+                      <Label htmlFor="custom">Monto fijo</Label>
                     </div>
                   </RadioGroup>
-                  <div className="pt-2">
-                    <Label className="mb-2" htmlFor="customDiscount">
-                      Ingresar cantidad de descuento ($)
-                    </Label>
-                    <Input
-                      id="customDiscount"
-                      type="number"
-                      placeholder="0.00"
-                      onChange={(e) =>
-                        setDiscount(Number.parseFloat(e.target.value) || 0)
-                      }
-                    />
-                  </div>
+                  {discountOption === "custom" && (
+                    <div className="pt-2">
+                      <Label className="mb-2" htmlFor="customDiscount">
+                        Ingresar cantidad de descuento ($)
+                      </Label>
+                      <Input
+                        id="customDiscount"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value={customDiscount}
+                        onChange={(e) => setCustomDiscount(e.target.value)}
+                      />
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
@@ -600,7 +685,7 @@ export default function Sales() {
               <Button
                 variant="outline"
                 className="w-full bg-transparent"
-                onClick={() => setSaleItems([])}
+                onClick={resetSale}
               >
                 Cancelar
               </Button>
@@ -609,14 +694,61 @@ export default function Sales() {
               className="w-full h-16 text-lg"
               size="lg"
               onClick={handleCompleteSale}
-              disabled={saleItems.length === 0}
+              disabled={saleItems.length === 0 || !shift || submitting || paymentError !== null}
             >
               <Receipt className="mr-2 h-5 w-5" /> Completar venta (
               {toPriceString(total)})
             </Button>
+            <div className="flex items-center gap-2 self-start">
+              <Checkbox
+                id="autoprint"
+                checked={autoPrint}
+                onCheckedChange={(checked) => {
+                  setAutoPrint(!!checked);
+                  localStorage.setItem(AUTO_PRINT_KEY, String(!!checked));
+                }}
+              />
+              <Label htmlFor="autoprint">Imprimir recibo automáticamente</Label>
+            </div>
           </CardFooter>
         </Card>
       </div>
+
+      <Dialog
+        open={completedSale !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCompletedSale(null);
+            barcodeInput.current?.focus();
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Venta #{completedSale?.id} completada</DialogTitle>
+            <DialogDescription>Total cobrado: {toPriceString(completedSale?.total ?? 0)}</DialogDescription>
+          </DialogHeader>
+          {completedSale?.payments.some((payment) => payment.change > 0) && (
+            <div className="text-center text-3xl font-bold">
+              Cambio: {toPriceString(completedSale.payments.reduce((sum, payment) => sum + payment.change, 0))}
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={async () => completedSale && printReceipt(completedSale, await fetchCompany())}
+            >
+              <Printer className="mr-2 h-4 w-4" /> Imprimir recibo
+            </Button>
+            <Button variant="outline" onClick={() => navigate(`/ventas/${completedSale?.id}`)}>
+              Ver venta
+            </Button>
+            <Button onClick={() => setCompletedSale(null)} autoFocus>
+              Nueva venta
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }

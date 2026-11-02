@@ -15,6 +15,8 @@ import com.irvin.pos.repositories.ProductRepository;
 import com.irvin.pos.repositories.StockRepository;
 import com.irvin.pos.repositories.SupplierRepository;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class StockService {
 
@@ -26,6 +28,9 @@ public class StockService {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     public Stock createNewStok(Stock stock){
         return stockRepository.save(stock);
@@ -53,8 +58,11 @@ public class StockService {
         Stock savedStock = stockRepository.save(stock);
 
         product.setStock(savedStock);
-        product.setAvailable(product.getAvailable() + addStockDTO.getQuantity());
-        return productRepository.save(product);
+        productRepository.save(product);
+        productRepository.increaseAvailable(product.getId(), addStockDTO.getQuantity());
+        // reload the stock value written by the update query
+        entityManager.refresh(product);
+        return product;
     }
 
 }

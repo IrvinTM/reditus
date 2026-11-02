@@ -21,7 +21,16 @@ public class DefaultUserSeeder {
         @Value("${app.security.password:admin123}") String password
     ) {
         return args -> {
-            if (!shouldSeedDefaultUser || userAccountRepository.existsByUsername(username)) {
+            if (!shouldSeedDefaultUser) {
+                return;
+            }
+            UserAccount existing = userAccountRepository.findByUsername(username).orElse(null);
+            if (existing != null) {
+                // installs from before this check may still be using the default password
+                if (!existing.isMustChangePassword() && passwordEncoder.matches(password, existing.getPassword())) {
+                    existing.setMustChangePassword(true);
+                    userAccountRepository.save(existing);
+                }
                 return;
             }
 
@@ -32,7 +41,7 @@ public class DefaultUserSeeder {
             account.setName(username);
             account.setEmail(username + "@local");
             account.setEnabled(true);
-
+            account.setMustChangePassword(true);
             userAccountRepository.save(account);
         };
     }

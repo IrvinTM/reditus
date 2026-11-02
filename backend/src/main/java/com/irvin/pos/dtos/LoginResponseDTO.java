@@ -4,6 +4,7 @@ public record LoginResponseDTO(
     String token,
     String name,
     String email,
-    String role
+    String role,
+    boolean mustChangePassword
 ) {
 }

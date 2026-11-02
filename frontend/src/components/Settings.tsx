@@ -16,115 +16,52 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { toast } from "sonner";
-import { CashRegister } from "@/types/types";
+import { Company } from "@/types/types";
 import { Plus } from "lucide-react";
+import { useAuth } from "@/auth/AuthContext";
+import { setDeviceRegisterId, useRegister } from "@/hooks/use-register";
+import { apiErrorMessage, toPriceString } from "@/utils/utils";
+import { fetchCompany } from "./sales/Receipt";
+
+const appUrl = import.meta.env.VITE_BACK_URL;
 
 export default function Settings() {
-  const [cashRegisters, setCashRegisters] = useState<CashRegister[]>([]);
+  const { isAdmin } = useAuth();
+  const { registers, registerId, reload } = useRegister();
   const [selectedRegisterId, setSelectedRegisterId] = useState<string>("");
-  const appUrl = import.meta.env.VITE_BACK_URL;
-
-  const fetchCashRegisters = () => {
-    fetch(`${appUrl}/api/cashregister`)
-      .then((res) => res.json())
-      .then((data) => {
-        setCashRegisters(data.content);
-        // Load saved preference
-        const savedId = localStorage.getItem("defaultCashRegisterId");
-        if (savedId && data.content.some((r: CashRegister) => r.id.toString() === savedId)) {
-          setSelectedRegisterId(savedId);
-        } else if (data.content?.length > 0) {
-          // Default to first if not set or saved ID not found
-          const firstId = data.content[0].id.toString();
-          setSelectedRegisterId(firstId);
-          // Optional: Auto-save default if none was set? 
-          // Better let user explicitly save, but for "default behavior" it works.
-        } else if (data.content?.length === 0) {
-          createDefaultCashRegister()
-        }
-      })
-      .catch((err) => console.error("Error fetching cash registers:", err));
-  };
+  const [newRegisterName, setNewRegisterName] = useState("");
 
   useEffect(() => {
-    fetchCashRegisters()
-  }, []);
+    setSelectedRegisterId(registerId?.toString() ?? "");
+  }, [registerId]);
 
   const handleSave = () => {
     if (selectedRegisterId) {
-      localStorage.setItem("defaultCashRegisterId", selectedRegisterId);
+      setDeviceRegisterId(Number(selectedRegisterId));
+      reload();
       toast.success("Configuración guardada", {
-        description: `Caja registradora #${selectedRegisterId} seleccionada como predeterminada.`,
+        description: "Este equipo venderá desde la caja seleccionada.",
       });
     }
   };
-  //create default cash register if it does not exist i need to first check if
-  //the cash re 1 does not exist
-  const createDefaultCashRegister = async () => {
-
-    const cashRegisterDefault: CashRegister = cashRegisters[0];
-
-    if (!cashRegisterDefault) {
-      try {
-        const response = await fetch(`${appUrl}/api/cashregister/create`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ balance: 0 }),
-        });
-
-        if (response.ok) {
-          const newRegister = await response.json();
-          toast.success("Caja registradora creada", {
-            description: `Se ha creado la caja #${newRegister.id}`
-          });
-          fetchCashRegisters();
-          // If it's the first one, select it
-          if (cashRegisters.length === 1) {
-            setSelectedRegisterId(newRegister.id.toString());
-            handleSave()
-
-          }
-        } else {
-          toast.error("Error al crear caja registradora");
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error("Error de conexión");
-      }
-
-    } else {
-      toast("ya hay cajas registradoras")
-    }
-
-
-  }
 
   const handleCreateRegister = async () => {
-    try {
-      const response = await fetch(`${appUrl}/api/cashregister/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ balance: 0 }),
-      });
-
-      if (response.ok) {
-        const newRegister = await response.json();
-        toast.success("Caja registradora creada", {
-          description: `Se ha creado la caja #${newRegister.id}`
-        });
-        fetchCashRegisters();
-        // If it's the first one, select it
-        if (cashRegisters.length === 0) {
-          setSelectedRegisterId(newRegister.id.toString());
-        }
-      } else {
-        toast.error("Error al crear caja registradora");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error de conexión");
+    const response = await fetch(`${appUrl}/api/cashregister/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newRegisterName }),
+    });
+    if (!response.ok) {
+      toast.error(await apiErrorMessage(response, "Error al crear caja registradora"));
+      return;
     }
+    const created = await response.json();
+    toast.success(`Caja "${created.name}" creada`);
+    setNewRegisterName("");
+    reload();
   };
 
   return (
@@ -135,38 +72,37 @@ export default function Settings() {
         <div className="grid gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Configuración de Caja</CardTitle>
+              <CardTitle>Caja de este equipo</CardTitle>
               <CardDescription>
                 Selecciona la caja registradora que utilizará este terminal para realizar ventas.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
-                <label className="text-sm font-medium">Caja Registradora Predeterminada</label>
-                <div className="flex gap-2">
-                  <Select
-                    value={selectedRegisterId}
-                    onValueChange={setSelectedRegisterId}
-                  >
-                    <SelectTrigger className="w-[280px]">
-                      <SelectValue placeholder="Seleccionar caja..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cashRegisters?.map((register) => (
-                        <SelectItem key={register.id} value={register.id.toString()}>
-                          Caja #{register.id} (Balance: ${register.balance})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="icon" onClick={handleCreateRegister} title="Crear nueva caja">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {cashRegisters?.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-yellow-600">
-                    No hay cajas registradas. Crea una nueva para comenzar a vender.
-                  </p>
+                <Select value={selectedRegisterId} onValueChange={setSelectedRegisterId}>
+                  <SelectTrigger className="w-[280px]">
+                    <SelectValue placeholder="Seleccionar caja..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {registers.map((register) => (
+                      <SelectItem key={register.id} value={register.id.toString()}>
+                        {register.name ?? `Caja ${register.id}`} ({toPriceString(register.balance)})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {isAdmin && (
+                  <div className="flex gap-2">
+                    <Input
+                      className="w-[280px]"
+                      placeholder="Nombre de la nueva caja"
+                      value={newRegisterName}
+                      onChange={(e) => setNewRegisterName(e.target.value)}
+                    />
+                    <Button variant="outline" onClick={handleCreateRegister} disabled={!newRegisterName.trim()}>
+                      <Plus className="mr-1 h-4 w-4" /> Crear caja
+                    </Button>
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -174,8 +110,62 @@ export default function Settings() {
               <Button onClick={handleSave} disabled={!selectedRegisterId}>Guardar cambios</Button>
             </CardFooter>
           </Card>
+
+          {isAdmin && <CompanySettings />}
         </div>
       </div>
     </Layout>
+  );
+}
+
+/** Business data printed on receipts. */
+function CompanySettings() {
+  const [company, setCompany] = useState<Company>({});
+
+  useEffect(() => {
+    fetchCompany().then((data) => setCompany(data ?? {}));
+  }, []);
+
+  const field = (key: keyof Company, label: string) => (
+    <div className="grid gap-2">
+      <Label htmlFor={`company-${key}`}>{label}</Label>
+      <Input
+        id={`company-${key}`}
+        value={company[key] ?? ""}
+        onChange={(e) => setCompany({ ...company, [key]: e.target.value })}
+      />
+    </div>
+  );
+
+  const save = async () => {
+    const response = await fetch(`${appUrl}/api/company`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(company),
+    });
+    if (response.ok) {
+      toast.success("Datos del negocio guardados");
+    } else {
+      toast.error(await apiErrorMessage(response, "No se pudieron guardar los datos"));
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Datos del negocio</CardTitle>
+        <CardDescription>Aparecen en los recibos impresos.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4 md:grid-cols-2">
+        {field("name", "Nombre")}
+        {field("address", "Dirección")}
+        {field("phoneNumber", "Teléfono")}
+        {field("email", "Email")}
+        {field("logo", "URL del logo")}
+      </CardContent>
+      <CardFooter>
+        <Button onClick={save}>Guardar</Button>
+      </CardFooter>
+    </Card>
   );
 }
