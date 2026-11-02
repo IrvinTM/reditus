@@ -1,9 +1,6 @@
 steps:
-- name: 'gcr.io/cloud-builders/mvn'  
-  args: ['install', '-DskipTests']                
-
 - name: 'gcr.io/cloud-builders/docker' 
-  args: ['build', '--tag=us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/pos-dev', '.']
+  args: ['build', '--tag=us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/pos-dev', 'backend']
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/pos-dev']

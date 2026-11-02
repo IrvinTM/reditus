@@ -3,8 +3,10 @@ FROM maven:3.8.3-openjdk-17 AS build
 
 WORKDIR /app
 
-RUN git clone https://github.com/IrvinTM/pos.git .
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
+COPY src ./src
 RUN mvn clean package -DskipTests
 
 #Run
