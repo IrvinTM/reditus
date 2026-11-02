@@ -1,6 +1,6 @@
-# POS
+# Reditus
 
-Monorepo for the POS system.
+Monorepo for the Reditus POS system.
 
 | Path | What | Deploy |
 |------|------|--------|
