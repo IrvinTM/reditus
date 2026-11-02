@@ -9,6 +9,7 @@ import {
 import { EditDialog } from "./EditProduct";
 import { toPriceString } from "@/utils/utils";
 import { useState } from "react";
+import { useAuth } from "@/auth/AuthContext";
 import { DeleteDialog } from "./DeleteDialog";
 import { AddStockDialog } from "./AddStockDialog";
 
@@ -18,6 +19,7 @@ interface ProductCard {
 }
 const ProductCard = ({ product, onProductDeleted }: ProductCard) => {
   const [prod, setProd] = useState<Product>(product);
+  const { isAdmin } = useAuth();
   const [imageError, setImageError] = useState(false);
 
   const showImage = prod.image && !imageError;
@@ -56,11 +58,13 @@ const ProductCard = ({ product, onProductDeleted }: ProductCard) => {
               Stock: {prod.available}
             </span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <AddStockDialog product={prod} onStockAdded={setProd} />
-            <EditDialog product={prod} onProductChange={setProd} />
-            <DeleteDialog product={prod} onProductDeleted={onProductDeleted}/>
-          </div>
+          {isAdmin && (
+            <div className="flex flex-wrap gap-2">
+              <AddStockDialog product={prod} onStockAdded={setProd} />
+              <EditDialog product={prod} onProductChange={setProd} />
+              <DeleteDialog product={prod} onProductDeleted={onProductDeleted}/>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

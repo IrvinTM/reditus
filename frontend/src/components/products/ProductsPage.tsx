@@ -6,8 +6,10 @@ import Layout from "../layout/Layout";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { AddDialog } from "./AddProduct";
+import { useAuth } from "@/auth/AuthContext";
 
 const Products = () => {
+  const { isAdmin } = useAuth();
   const [productList, setProductList] = useState<Product[]>();
   const appUrl = import.meta.env.VITE_BACK_URL;
   const [exampleProduct, setExampleProduct] = useState<Product>({
@@ -68,12 +70,13 @@ const Products = () => {
       <Layout>
         <div className="container mx-auto p-6">
           <div className="flex gap-2">
-            <AddDialog
-              product={exampleProduct}
-              onProductAdded={setExampleProduct}
-              onProductSuccess={getProducts}
-
-            />
+            {isAdmin && (
+              <AddDialog
+                product={exampleProduct}
+                onProductAdded={setExampleProduct}
+                onProductSuccess={getProducts}
+              />
+            )}
             <Input value={searchText} onChange={(e) => {setSearchText(e.target.value);}} />
             <Button onClick={() => handleSearch(searchText)} className="mb-2">Buscar</Button>
           </div>

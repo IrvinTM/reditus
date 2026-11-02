@@ -7,7 +7,8 @@ import {
   Computer,
   Settings2,
   Store,
-  History
+  History,
+  Wallet
 } from "lucide-react"
 
 import {
@@ -60,6 +61,7 @@ const data = {
         {
           title: "Proveedores",
           url: "/proveedores",
+          adminOnly: true,
         },
         // {
         //   title: "Settings",
@@ -75,6 +77,10 @@ const data = {
         {
           title: "Vender",
           url: "/vender",
+        },
+        {
+          title: "Caja",
+          url: "/caja",
         },
         {
           title: "Historial de ventas",
@@ -118,6 +124,16 @@ const data = {
           title: "Tema",
           url: "/ajustes/tema",
         },
+        {
+          title: "Usuarios",
+          url: "/usuarios",
+          adminOnly: true,
+        },
+        {
+          title: "Copias de seguridad",
+          url: "/ajustes/copias",
+          adminOnly: true,
+        },
         // {
         //   title: "Billing",
         //   url: "#",
@@ -134,6 +150,11 @@ const data = {
       name: "Vender",
       url: "/vender",
       icon: Store,
+    },
+    {
+      name: "Caja",
+      url: "/caja",
+      icon: Wallet,
     },
     {
       name: "Productos",
@@ -157,18 +178,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     plan: isAdmin ? "Administrador" : "Cajero",
   }
 
-  const navMain = data.navMain.map((section) => {
-    if (section.title !== "Ajustes" || !section.items) {
-      return section
-    }
-
-    return {
-      ...section,
-      items: isAdmin
-        ? [...section.items, { title: "Usuarios", url: "/usuarios" }]
-        : section.items,
-    }
-  })
+  const navMain = data.navMain.map((section) => ({
+    ...section,
+    items: section.items?.filter((item) => isAdmin || !("adminOnly" in item && item.adminOnly)),
+  }))
 
   return (
     <Sidebar collapsible="icon" {...props}>
