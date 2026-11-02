@@ -3,6 +3,7 @@ package com.irvin.pos.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping("/add")
     public ResponseEntity<CategoryDTO> addCategory(@RequestBody CategoryDTO category) throws PropertyAlreadyExistException{
         CategoryDTO c = categoryService.addCategory(category);
@@ -35,12 +37,14 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PutMapping("/update")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category){
         CategoryDTO c = categoryService.updateCategorie(category);
         return ResponseEntity.ok(c);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable long id){
         categoryService.deleteCategory(id);

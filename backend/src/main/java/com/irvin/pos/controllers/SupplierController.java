@@ -3,6 +3,7 @@ package com.irvin.pos.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,16 +29,19 @@ public class SupplierController {
         return ResponseEntity.ok(supplierService.getAllSuppliers());
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping("/create")
     public ResponseEntity<SupplierDTO> createSupplier(@RequestBody SupplierDTO supplier) throws Exception {
         return ResponseEntity.ok(supplierService.createSupplier(supplier));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PutMapping("/update")
     public ResponseEntity<SupplierDTO> updateSupplier(@RequestBody SupplierDTO supplier) {
         return ResponseEntity.ok(supplierService.updateSupplier(supplier));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteSupplier(@PathVariable long id) {
         supplierService.deleteSupplier(id);

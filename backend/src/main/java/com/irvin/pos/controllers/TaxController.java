@@ -3,6 +3,7 @@ package com.irvin.pos.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +28,14 @@ public class TaxController {
         return taxService.getAllTaxes();
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping("/create")
     public ResponseEntity<TaxDTO> CreateTax(@RequestBody TaxDTO taxDTO)throws Exception{
         return ResponseEntity.ok(
                 taxService.createTax(taxDTO));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PutMapping("/update")
     public ResponseEntity<TaxDTO> updateTax(@RequestBody TaxDTO tax) throws Exception{
         return ResponseEntity.ok(
@@ -40,6 +43,7 @@ public class TaxController {
                 );
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteTax(@PathVariable long id){
         taxService.deleteTax(id);
