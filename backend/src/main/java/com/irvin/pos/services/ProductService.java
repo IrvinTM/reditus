@@ -90,7 +90,6 @@ public class ProductService {
                 prod.setTaxIncludedPrice(productDTO.getTaxIncludedPrice());
                 prod.setProfitMargin(productDTO.getProfitMargin());
                 prod.setSalesPrice(productDTO.getSalesPrice());
-                prod.setAvailable(productDTO.getAvailable());
             return ObjectMapper.productToDTO(productRepository.save(prod));
             }else{
                 throw new IllegalArgumentException("Product not found");

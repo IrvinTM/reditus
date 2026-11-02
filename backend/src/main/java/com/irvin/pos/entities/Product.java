@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Version;
 
 @Entity
 public class Product {
@@ -37,6 +38,10 @@ public class Product {
     private long profitMargin;
     private long salesPrice;
     private long available;
+
+    // optimistic lock so concurrent sales can't oversell or lose stock updates
+    @Version
+    private long version;
     @ManyToOne
     @JoinColumn(name = "stock_id")
     private Stock stock;
